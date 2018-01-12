@@ -17,6 +17,11 @@
 //*******************************************************************************
 ﻿
 
+// Don't enforce entropy in environments without document
+document = typeof document === 'undefined' ? {
+    attachEvent: function() {}
+} : document;
+
 var msrCryptoVersion = "1.4";
 var msrCrypto = msrCrypto || (function () {
 
