@@ -1,0 +1,207 @@
+﻿<!--
+//*******************************************************************************
+//
+//    Copyright 2014 Microsoft
+//
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//        http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+-->
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <title></title>
+
+    <!-- crypto -->
+    <script type="text/javascript" src="../msrcrypto.js"></script>
+
+    <!-- Page scripts -->
+    <script type="text/javascript">
+
+        // This is an HMAC Sha-256 sample.
+        // - import HMAC key
+        // - sign some data
+        // - verify the signature
+
+
+        // Go ahead and change window.msrCrypto to window.crypto in the line below to
+        // verify this code against the native browser web crypto api.
+        var cryptoObject = window.msrCrypto;
+
+        var subtle = cryptoObject.subtle; window.msrCrypto
+
+        // To compute the HMAC we need a key
+        // I generated this using .GenerateKey() then .ExportKey()
+        var hmckKeyInJwkFormat =
+                {
+                    // The key type is an Octet sequence (used by symmetric keys)
+                    kty: "oct",
+
+                    // The algorithm. HMAC using SHA-256 in this case.
+                    alg: "HS256",
+
+                    // The actual bytes of the key encoded with Base64Url
+                    k: "aGUjFzJj_OHygK4VBybLIiwGmM5rgZU8jedDcFXp3xQ",
+
+                    // This key is extractable.
+                    ext: true
+                };
+
+        // Variable to hold the key
+        var hmacKeyHandle;
+
+        // The algorithm used for the key import
+        var keyImportAlgorithm = { name: "HMAC", hash: { name: "SHA-256" } };
+
+        // Import the hmac key for HMAC SHA-256 using jwk format
+        subtle.importKey("jwk", hmckKeyInJwkFormat, keyImportAlgorithm, true, ["sign", "verify"])
+        .then(
+            function (importedKeyHandle) {
+                hmacKeyHandle = importedKeyHandle;
+            }
+        );
+
+        function onTextChanged() {
+
+            // Make sure key has been imported
+            if (!hmacKeyHandle) {
+                return;
+            }
+
+            // Convert the plain text to a byte array.
+            // The library expects data to be arrays of bytes. You'll have to convert
+            // data before operating on it.
+            // This sample uses a simple ASCII text conversion function. For multi-byte text
+            // you will need UTF-8 conversion to bytes.
+            var plainTextBytes = toSupportedArray(TextArea_PlainText.value);
+
+            // The algorithm used for the hmac sign function
+            var hmacSignAlgorithm = { name: "HMAC", hash: { name: "SHA-256" } };
+
+            subtle.sign(hmacSignAlgorithm, hmacKeyHandle, plainTextBytes)
+            .then(
+
+                // This function will be called when the hmac signing is complete
+                function (hmacSignature) {
+
+                    var sig = toSupportedArray(hmacSignature);
+
+                    TextArea_HMACHex.value = bytesToHexString(sig);
+
+                    var hmacVerifyAlgorithm = { name: "HMAC", hash: { name: "SHA-256" } };
+
+                    return subtle.verify(
+                        hmacVerifyAlgorithm,
+                        hmacKeyHandle,
+                        sig,
+                        plainTextBytes);
+                }
+            )
+            .then(
+                // This function will be called when the Verfiy call completes
+                function (verificationResult) {
+                    TextArea_HMACVerify.value = verificationResult;
+                }
+            );
+        }
+
+            // Converts Arrays, ArrayBuffers, TypedArrays, and Strings to
+            // to either a Uint8Array or a regular Array depending on browser support.
+            // You should use this when passing byte data in or out of crypto functions
+            function toSupportedArray(data) {
+
+                // does this browser support Typed Arrays?
+                var typedArraySupport = (typeof Uint8Array !== "undefined");
+
+                // get the data type of the parameter
+                var dataType = Object.prototype.toString.call(data);
+                dataType = dataType.substring(8, dataType.length - 1);
+
+                // determine the type
+                switch (dataType) {
+
+                    // Regular JavaScript Array. Convert to Uint8Array if supported
+                    // else do nothing and return the array
+                    case "Array":
+                        return typedArraySupport ? new Uint8Array(data) : data;
+
+                        // ArrayBuffer. IE11 Web Crypto API returns ArrayBuffers that you have to convert
+                        // to Typed Arrays. Convert to a Uint8Arrays and return;
+                    case "ArrayBuffer":
+                        return new Uint8Array(data);
+
+                        // Already Uint8Array. Obviously there is support.
+                    case "Uint8Array":
+                        return data;
+
+                    case "Uint16Array":
+                    case "Uint32Array":
+                        return new Uint8Array(data);
+
+                        // String. Convert the string to a byte array using Typed Arrays if
+                        // supported.
+                    case "String":
+                        var newArray = typedArraySupport ? new Uint8Array(data.length) : new Array(data.length);
+                        for (var i = 0; i < data.length; i += 1) {
+                            newArray[i] = data.charCodeAt(i);
+                        }
+                        return newArray;
+
+                        // Some other type. Just return the data unchanged.
+                    default:
+                        throw new Error("toSupportedArray : unsupported data type " + dataType);
+                }
+
+            }
+
+            // General function to handle errors
+            function handleError(text) {
+                return function (e) {
+                    alert(text + " : " + e.type);
+                };
+            }
+
+            // Converts an Array or TypedArray to a hex string
+            function bytesToHexString(bytes) {
+                var result = "";
+                for (var i = 0 ; i < bytes.length; i++) {
+                    if (i % 4 === 0 && i !== 0) result += "-";
+                    var hexval = bytes[i].toString(16).toUpperCase();
+                    if (hexval.length == 1)
+                        result += "0";
+                    result += hexval;
+                }
+                return result;
+            }
+
+       
+    </script>
+
+</head>
+<body>
+    <label>Plain Text</label><br />
+    <textarea id="TextArea_PlainText" oninput="onTextChanged();" rows="10" cols="120">The quick brown fox jumps over the lazy dog.</textarea><br /><br />
+
+    <label>HMAC (will compute as you type in the Plain Text box)</label><br />
+    <textarea disabled="disabled" id="TextArea_HMACHex" rows="2" cols="120"></textarea><br /><br />
+
+    <label>HMAC Verify</label><br />
+    <textarea disabled="disabled" id="TextArea_HMACVerify" rows="2" cols="120"></textarea>
+
+</body>
+</html>

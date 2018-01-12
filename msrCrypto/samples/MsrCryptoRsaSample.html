@@ -1,0 +1,281 @@
+﻿<!--
+//*******************************************************************************
+//
+//    Copyright 2014 Microsoft
+//
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//        http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>msrcrypto sample</title>
+
+    <!-- crypto -->
+    <script type="text/javascript" src="../msrcrypto.js"></script>
+
+    <!-- Page scripts -->
+    <script type="text/javascript">
+
+        // This is an RSA 2048 Encryption sample.
+        // - we import an RSA key pair from jwk format
+        // - RSA encrypt a plaintext string using OAEP
+        // - RSA decrypt the encrypted data back to plaintext using OAEP
+
+
+        // Our crypto object is window.msrCrypto
+        // IE11 uses window.msCrypto (notice the slight difference in the spelling)
+        // Newer browsers use window.crypto.
+        // Go ahead and change msrCrypto to msCrypto/crypto in the line below to
+        // verify this code against native browser Web Crypto API
+        var cryptoObject = window.msrCrypto;
+
+        // The crypto functions are on the subtle interface just as in the
+        // IE11 Web Crypto API. For example: msrCrypto.subtle.encrypt(...)
+        var subtle = cryptoObject.subtle;
+
+        // Some crypto operations require random number generation.
+        // There is a pseudo-random number generator in msrCrypto, but no hardware
+        // source of entropy for a seed in the browser.
+        // So you have to get 48-random bytes from outside the browser.  Most likely
+        // from your server. Here I'm supplying 48 not-so-random bytes as an example.
+        // DO NOT HARDCODE THIS VALUE. DO NOT USE Math.random()
+        var entropyFromServer = [116, 220, 84, 202, 241, 51, 80, 140, 101, 77, 9, 161, 200, 183, 206, 221, 70, 140, 143, 49, 104, 196, 234, 197, 170, 188, 239, 158, 218, 251, 231, 101, 164, 39, 146, 87, 67, 59, 80, 226, 43, 116, 202, 90, 191, 149, 91, 225];
+
+
+        // Before calling crypto functions that require random number generation,
+        // we need to initialize the msrCrypto prng. This step is not required with the
+        // IE11 web crypto api as it has access to the hardware rng. We do not.
+        // Not all crypto operations require random numbers, so you only need
+        // to do this if the crypto operations you're calling requires random numbers.
+        // RSA OAEP padding does require random numbers.
+        // You only need to call initPrng once.
+        // We'll skip this if we're using a native Web Crypto API
+        if (cryptoObject.initPrng) {
+            cryptoObject.initPrng(entropyFromServer);
+        }
+
+        // Let's encrypt some data with RSA-OAEP
+        // Here is our data (max length for RSA-OAEP is 244 bytes):
+        var plainText = "The quick brown fox jumps over the lazy dog";
+
+
+        // Convert the plain text to a byte array.
+        // This sample uses a simple ASCII text conversion. For
+        // multi-byte text you will need UTF-8 conversion to bytes.
+        var plainTextBytes = toSupportedArray(plainText);
+
+        // * toSupportedArray()
+        // is a utility function (at the bottom of this page.)
+        // Native Web Crypto API uses Typed Arrays for passing data in and out of its crypto
+        // functions. Typed Arrays are only supported on IE10 and newer. MsrCrypto
+        // supports IE8 and up. So Typed Arrays are not always available.
+        // MsrCrypto can use Typed Arrays or regular JavaScript Arrays interchangeably.
+        // If you are writing your code to use the native Web Crypto API when available and
+        // msrCrypto for IE10 and below, you will have to be careful to use the correct
+        // type of array depending on browser support.
+        // toSupportedArray() takes care of this. It will convert its parameter
+        // to either a Uint8Array typed array or regular Array based on the current
+        // browser support.
+
+
+        // To do the RSA encryption, we need a public key
+        // We can't generate RSA key pairs with msrCrypto. It would take way too long, so
+        // you'll have to supply the keys.
+        // To use an externally supplied key, you will have to import it.
+        // Here is a RSA key pair in JSON Web Key format (jwk)
+        // http://tools.ietf.org/html/draft-ietf-jose-json-web-key-10
+        // I generated this using IE11 API .GenerateKey() and then .ExportKey() to jwk
+        // The data in the keys is Base64Url encoded (slightly different than normal Base64)
+        var publicKey =
+        {
+            kty: "RSA",
+            ext: true,
+            n: "uZQSanGzrG9aSPj3-yReDkFj4JDDPQJo5noV_HgntHhqyF6ZZPA3n4z4qmI39Hfjovv1EmWrS0aFofEBF-87EB0PF2Z445KMHFDQmv8kUe6wblf95EKQ0XI2OBadFaiIBIxgCmbG7o-pJQjY74U0KDMQEwe0DfMcfFZ_-y6vxEd-RNeff2Lm-sQlZ7E0HpBlwQGYHJZonv1mVuZuVlF1qDaam7V_8cF8MgrbqQP_xG4eM5odLNqAOTGNrtvo5XV-a5Qzd2gVqAc0VrayOUknjX_2OTndik5YWLspva6L-T07ysnMPqiqD0tTPcR_3hYHqNDKpWujbmtSevBOtLUgVw",
+            e: "AQAB"
+        }
+
+        var privateKey =
+        {
+            kty: "RSA",
+            ext: true,
+            n: "uZQSanGzrG9aSPj3-yReDkFj4JDDPQJo5noV_HgntHhqyF6ZZPA3n4z4qmI39Hfjovv1EmWrS0aFofEBF-87EB0PF2Z445KMHFDQmv8kUe6wblf95EKQ0XI2OBadFaiIBIxgCmbG7o-pJQjY74U0KDMQEwe0DfMcfFZ_-y6vxEd-RNeff2Lm-sQlZ7E0HpBlwQGYHJZonv1mVuZuVlF1qDaam7V_8cF8MgrbqQP_xG4eM5odLNqAOTGNrtvo5XV-a5Qzd2gVqAc0VrayOUknjX_2OTndik5YWLspva6L-T07ysnMPqiqD0tTPcR_3hYHqNDKpWujbmtSevBOtLUgVw",
+            e: "AQAB",
+            d: "KZH2OBrlNRyyfEMtBXhli0rxjRXQbkOybOJvN2FQ_5ezz9OFB_vZceeZsk0THLOYbeODx823e8K934NFi-9-awMfZM4DCXND6Hnf6MB7idDue6FBUdbpaslrRNAn-viIE4DAaMQSDtFmgdHECo9rmg-qK6Efn7pUKLQVshYIsG4ytQ8Om6CJ8MVWR8hwL-65uSCSUElXDHaG-U8CkfivEIesVPfkQ65Cd16zPYlqIReRSaB_w2I7orf_1T5IY1aa0FuzBxEq1q8FPLQnZfIOCG_kMGhUnMJRx8NarQJUILbnKX7kNPMq-eiSvBuHBIFpsJ-VSDHpq9aPqQYskpsYCQ",
+            p: "_DYTq5Kr_c-abCL5yZ517mw_k3Hpruh3q9ibQVrjT10nuWlLwR8N_rv6uxs6t9qyfncXGPOjgMOvrSSWW49AzTLJ7DgCWtZvH1TKR4YilR3En2D9cww1f9iYCKBbyxvrT7X5mT9g2yGTxOoVObqq46GdaaNaWd8FuTpX-HEfjA8",
+            q: "vF2_J4nJHXFPxdJe_Om1xGJGp0eJVDfMY4YQBx2awW-sijjRUtqS8rH8ckPABvBEzYi95e1FoMwRVKo3XSlxPlBrJZHtsj3lVY83tDnO-Nv4rPCoX_nQFaVSVdmIVpiUF9yFrIjndtACppANAGcfhpZutrYjfru2NM6xOmkU_zk",
+            dp: "tT1K_1VkIP0ptCGiLH-hsZa6TQNj8Rv-u0_pqZpdlK-Vl0iSdpIRZYfCEujrViljcTu1LmoOib6VpK-RGPSllY-0yPoqvwovSm2M-r7qZQvCOuHg3-bbHycPgctyi09h1qMnXTfNK0tCvBOW8ygwG2oNC1em2sRIgaXqh48LI4M",
+            dq: "G_aKxxLUUVOd9Q8K3N7RBgtU08Zx45e49tlTDcteSvMKGSbgJD2gbPjxMgFOw3jtrdlr33M-z-UbeYcfWuwpDIghr90e_UPlBLOTIGUojZcSLpI3XLAYLO5y752weLKD4ZryGS_ltKSikBl4ZKPqcS9p1iPp1wmEvgglFTe-Tzk",
+            qi: "PZuSu0-5MEY0Zgry7_A9ZMN91tqSkcmEpfRVuKnilj8zNmOEAUyEq8lvMji5oFBxFKtx0pbqiK5tuxPecdwJ7Y8iYxu2Wb50IoORJggc4er6Q5NIA3_XKEn3x8GORqdibPuPHZXXjd4sG6dQIZJbWNEyzvzyRDfidrKZxS5yvIU"
+        }
+
+        var encryptedBytes,
+            publicKeyHandle,
+            privateKeyHandle,
+            keyImportAlgorithm = { name: "RSA-OAEP", hash: { name: "SHA-256" } },
+            encryptAlgorithm = { name: "RSA-OAEP", hash: { name: "SHA-256" } },
+            decryptAlgorithm = { name: "RSA-OAEP", hash: { name: "SHA-256" } };
+
+        // Import the public key and private keys for RSA-OAEP using jwk format
+        subtle.importKey("jwk", publicKey, keyImportAlgorithm, true, ["encrypt"])
+        .then(
+            function (publicKey) {
+                publicKeyHandle = publicKey;
+                return subtle.importKey(
+                    "jwk",
+                    privateKey,
+                    keyImportAlgorithm, true, ["decrypt"]);
+            },
+            function (error) {
+                return Promise.reject("Public Key import error " + error);
+            }
+        )
+        .then(
+            function (privateKey) {
+                privateKeyHandle = privateKey;
+            },
+            function (error) {
+                alert("Private Key import error " + error);
+            }
+        );
+
+        function onButtonClick() {
+
+            // Abort if the key isn't imported yet
+            if (!publicKeyHandle) {
+                return;
+            }
+
+            var plainTextBytes = toSupportedArray(TextArea_PlainText.value);
+
+            // Now that we have a public key, we can encrypt our data
+            subtle.encrypt(encryptAlgorithm, publicKeyHandle, plainTextBytes)
+            .then(
+                // called when KeyImport for the public key is completed
+                function (encrypted) {
+
+                    // We get our encrypted bytes as an ArrayBuffer (Array for IE8/9)
+                    encryptedBytes = toSupportedArray(encrypted);
+
+                    // Display the encrypted data on the page
+                    TextArea_EncryptedHex.value = bytesToHexString(encryptedBytes);
+
+                    // Now we'll decrypt the encrypted data back to its original text
+                    return subtle.decrypt(
+                        decryptAlgorithm,
+                        privateKeyHandle,
+                        encryptedBytes);
+                },
+                function (error) {
+                    return Promise.reject("Encrypt error " + error);
+                }
+            )
+            .then(
+                // Called when the RSA decrypt operation is completed
+                // RSA decryption is very slow.
+                // It can take 3-4 seconds with the debugger attached.
+                function (decryptedBytes) {
+
+                    // Convert the bytes back into a string
+                    var decryptedPlainText = String.fromCharCode.apply(null, toSupportedArray(decryptedBytes));
+
+                    // Display the decrypted plainText on the page
+                    TextArea_DecryptedPlainText.value = decryptedPlainText;
+                },
+                function (error) {
+                    alert(error);
+                }
+            )
+        }
+
+        // Converts Arrays, ArrayBuffers, TypedArrays, and Strings to
+        // to either a Uint8Array or a regular Array depending on browser support.
+        // You should use this when passing byte data in or out of crypto functions
+        function toSupportedArray(data) {
+
+            // does this browser support Typed Arrays?
+            var typedArraySupport = (typeof Uint8Array !== "undefined");
+
+            // get the data type of the parameter
+            var dataType = Object.prototype.toString.call(data);
+            dataType = dataType.substring(8, dataType.length - 1);
+
+            // determine the type
+            switch (dataType) {
+
+                // Regular JavaScript Array. Convert to Uint8Array if supported
+                // else do nothing and return the array
+                case "Array":
+                    return typedArraySupport ? new Uint8Array(data) : data;
+
+                    // ArrayBuffer. IE11 Web Crypto API returns ArrayBuffers that you have to convert
+                    // to Typed Arrays. Convert to a Uint8Arrays and return;
+                case "ArrayBuffer":
+                    return new Uint8Array(data);
+
+                    // Already Uint8Array. Obviously there is support.
+                case "Uint8Array":
+                    return data;
+
+                case "Uint16Array":
+                case "Uint32Array":
+                    return new Uint8Array(data);
+
+                    // String. Convert the string to a byte array using Typed Arrays if
+                    // supported.
+                case "String":
+                    var newArray = typedArraySupport ? new Uint8Array(data.length) : new Array(data.length);
+                    for (var i = 0; i < data.length; i += 1) {
+                        newArray[i] = data.charCodeAt(i);
+                    }
+                    return newArray;
+
+                    // Some other type. Just return the data unchanged.
+                default:
+                    throw new Error("toSupportedArray : unsupported data type " + dataType);
+            }
+
+        }
+
+        // Converts an Array or TypedArray to a hex string
+        function bytesToHexString(bytes) {
+            var result = "";
+            for (var i = 0 ; i < bytes.length; i++) {
+                if (i % 4 === 0 && i !== 0) result += "-";
+                var hexval = bytes[i].toString(16).toUpperCase();
+                result += hexval.length === 2 ? hexval : "0" + hexval;
+            }
+            return result;
+        }
+
+
+    </script>
+
+
+</head>
+<body>
+
+    <label>Plain Text</label><br />
+    <textarea id="TextArea_PlainText" rows="2" cols="120">The quick brown fox jumps over the lazy dog.</textarea><br />
+    <input type="button" onclick="onButtonClick()" value="Encrypt" /><br /><br />
+
+    <label>Encrypted (this will change with each encryption)</label><br />
+    <textarea disabled="disabled" id="TextArea_EncryptedHex" rows="6" cols="120"></textarea><br /><br />
+
+    <label>Decrypted Plain Text</label><br />
+    <textarea disabled="disabled" id="TextArea_DecryptedPlainText" rows="2" cols="120"></textarea>
+
+</body>
+</html>

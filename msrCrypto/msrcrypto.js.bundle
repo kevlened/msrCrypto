@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+//*******************************************************************************
+//
+//    Copyright 2014 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+-->
+<bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://vswebessentials.com/schemas/v1/bundle.xsd">
+  <settings>
+    <!--Determines if the sprite image should be automatically optimized after creation/update.-->
+    <minify>true</minify>
+    <!--Determin whether to generate/re-generate this sprite on building the solution.-->
+    <runOnBuild>true</runOnBuild>
+    <!--Use absolute path in the generated CSS files. By default, the URLs are relative to generated bundled CSS file.-->
+    <adjustRelativePaths>false</adjustRelativePaths>
+    <!--Specifies a custom subfolder to save files to. By default, compiled output will be placed in the same folder and nested under the original file.-->
+    <outputDirectory />
+  </settings>
+  <!--The order of the <file> elements determines the order of the images in the bundle.-->
+  <files>
+    <file>/scripts/bundleHead.js</file>
+    <file>/scripts/operations.js</file>
+    <file>/scripts/global.js</file>
+    <file>/scripts/utilities.js</file>
+    <file>/scripts/worker.js</file>
+    <file>/scripts/jwk.js</file>
+    <file>/scripts/cryptoMath.js</file>
+    <file>/scripts/cryptoECC.js</file>
+    <file>/scripts/curves_NIST.js</file>
+    <file>/scripts/curves_BN.js</file>
+    <file>/scripts/curves_NUMS.js</file>
+    <file>/scripts/sha.js</file>
+    <file>/scripts/sha1.js</file>
+    <file>/scripts/sha256.js</file>
+    <file>/scripts/sha512.js</file>
+    <file>/scripts/hmac.js</file>
+    <file>/scripts/aes.js</file>
+    <file>/scripts/aes-cbc.js</file>
+    <file>/scripts/aes-gcm.js</file>
+    <file>/scripts/random.js</file>
+    <file>/scripts/entropy.js</file>
+    <file>/scripts/rsa-base.js</file>
+    <file>/scripts/rsa-oaep.js</file>
+    <file>/scripts/rsa-pkcs1.js</file>
+    <file>/scripts/rsa-pss.js</file>
+    <file>/scripts/rsa.js</file>
+    <file>/scripts/kdf.js</file>
+    <file>/scripts/ecdh.js</file>
+    <file>/scripts/ecdsa.js</file>
+    <file>/scripts/subtle.js</file>
+    <file>/scripts/wrapKey.js</file>
+    <file>/scripts/bundleTail.js</file>
+  </files>
+</bundle>

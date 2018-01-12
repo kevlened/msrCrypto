@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{46018058-C37B-47B3-A89B-2B531282B36B}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>msrCrypto</RootNamespace>
+    <AssemblyName>msrCrypto</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
+    <IncludeIisSettings>false</IncludeIisSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Camelot, Version=1.2013.12.12, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dotNetWebService\camelot\Microsoft.Camelot.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.TXT" />
+    <Content Include="msrcrypto.aes.js">
+      <DependentUpon>msrcrypto.aes.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="msrcrypto.aes.min.js">
+      <DependentUpon>msrcrypto.aes.js</DependentUpon>
+    </Content>
+    <Content Include="msrcrypto.js">
+      <DependentUpon>msrcrypto.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="msrcrypto.min.js">
+      <DependentUpon>msrcrypto.js</DependentUpon>
+    </Content>
+    <Content Include="dotNetWebService\DotNetWebService.asmx" />
+    <Content Include="scripts\aes-gcm.js" />
+    <Content Include="scripts\aes-cbc.js" />
+    <Content Include="scripts\aes.js" />
+    <Content Include="scripts\curves_BN.js" />
+    <Content Include="scripts\curves_NIST.js" />
+    <Content Include="scripts\cryptoMath.js" />
+    <Content Include="scripts\dotNet\dotNetInterop.js" />
+    <Content Include="scripts\ecdh.js" />
+    <Content Include="scripts\ecdsa.js" />
+    <Content Include="scripts\kdf.js" />
+    <Content Include="scripts\curves_NUMS.js" />
+    <Content Include="scripts\qunit\qunit-1.15.0.css" />
+    <Content Include="scripts\qunit\qunit-1.15.0.js" />
+    <Content Include="scripts\qunit\qunit-1.16.0.css" />
+    <Content Include="scripts\qunit\qunit-1.16.0.js" />
+    <Content Include="scripts\qunit\testoptions.js" />
+    <Content Include="scripts\rsa-base.js" />
+    <Content Include="scripts\rsa-oaep.js" />
+    <Content Include="scripts\rsa-pkcs1.js" />
+    <Content Include="scripts\rsa-pss.js" />
+    <Content Include="scripts\sha.js" />
+    <Content Include="scripts\sha1.js" />
+    <Content Include="scripts\entropy.js" />
+    <Content Include="scripts\hmac.js" />
+    <Content Include="scripts\cryptoECC.js" />
+    <Content Include="scripts\jwk.js" />
+    <Content Include="scripts\subtle.js" />
+    <Content Include="scripts\subtle\keyManager.js" />
+    <Content Include="scripts\operations.js" />
+    <Content Include="scripts\subtle\head.js" />
+    <Content Include="scripts\subtle\operations.js" />
+    <Content Include="scripts\subtle\promises.js" />
+    <Content Include="scripts\subtle\subtleInterface.js" />
+    <Content Include="scripts\subtle\tail.js" />
+    <Content Include="scripts\subtle\syncWorker.js" />
+    <Content Include="scripts\tests\CryptoTest.mathKAT.js" />
+    <Content Include="scripts\tests\CryptoTest.RSAKAT.js" />
+    <Content Include="scripts\tests\SubtleTest.promises.js" />
+    <Content Include="scripts\tests\SubtleTest.wrapKey.js" />
+    <Content Include="scripts\tests\SubtleTest.ecdsa.verify.js" />
+    <Content Include="scripts\tests\SubtleTest.ecdsa.sign.js" />
+    <Content Include="scripts\tests\SubtleTest.ecdh.js" />
+    <Content Include="scripts\tests\SubtleTest.kdf.js" />
+    <Content Include="scripts\tests\SubtleTest.aes.cbc.js" />
+    <Content Include="scripts\tests\SubtleTest.dotNetInterop.js" />
+    <Content Include="scripts\tests\SubtleTest.aes.gcm.js" />
+    <Content Include="scripts\tests\SubtleTest.rsa.sign.pss.js" />
+    <Content Include="scripts\tests\SubtleTest.rsa.verify.pss.js" />
+    <Content Include="scripts\tests\SubtleTest.rsa.verify.pkcs15.js" />
+    <Content Include="scripts\tests\SubtleTest.rsa.sign.pkcs15.js" />
+    <Content Include="scripts\tests\SubtleTest.sha1.js" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_72.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_73.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_74.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_75.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_76.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_77.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_78.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_79.txt" />
+    <Content Include="scripts\testVectors\tv_ecdsa.verify.js" />
+    <Content Include="scripts\testVectors\tv_ecdsa.sign.js" />
+    <Content Include="scripts\testVectors\tv_aes_cbc.js" />
+    <Content Include="scripts\testVectors\tv_aes_gcm.js" />
+    <Content Include="scripts\testVectors\tv_hmac_sha256.js" />
+    <Content Include="scripts\testVectors\tv_hmac_sha384.js" />
+    <Content Include="scripts\testVectors\tv_hmac_sha512.js" />
+    <Content Include="scripts\testVectors\tv_prng.js" />
+    <Content Include="scripts\testVectors\tv_rsa.sign.pss.js" />
+    <Content Include="scripts\testVectors\tv_rsa.verify.pss.js" />
+    <Content Include="scripts\testVectors\tv_rsa.verify.pkcs15.js" />
+    <Content Include="scripts\testVectors\tv_rsa.sign.pkcs15.js" />
+    <Content Include="scripts\testVectors\tv_sha1_short.js" />
+    <Content Include="scripts\testVectors\tv_sha1_long.js" />
+    <Content Include="scripts\worker.js" />
+    <Content Include="scripts\subtle\workerManager.js" />
+    <Content Include="msrcrypto.aes.min.js.map">
+      <DependentUpon>msrcrypto.aes.min.js</DependentUpon>
+    </Content>
+    <None Include="msrcrypto.intellisense.js" />
+    <Content Include="scripts\wrapKey.js" />
+    <Content Include="tests\CryptoECCTests.html" />
+    <Content Include="tests\PrngTests.html" />
+    <Content Include="samples\MsrCryptoHMACSample.html" />
+    <Content Include="samples\MsrCryptoRsaSample.html" />
+    <Content Include="scripts\tests\CryptoTest.math.js" />
+    <Content Include="scripts\tests\CryptoTest.math.ecc.js" />
+    <Content Include="scripts\tests\PrngTests.js" />
+    <Content Include="scripts\tests\SubtleTest.sha512.js" />
+    <Content Include="scripts\tests\SubtleTest.shared.js" />
+    <Content Include="scripts\tests\SubtleTest.rsa.js" />
+    <Content Include="scripts\tests\SubtleTest.hmac.js" />
+    <Content Include="scripts\tests\SubtleTest.sha256.js" />
+    <Content Include="scripts\global.js" />
+    <Content Include="scripts\sha512.js" />
+    <Content Include="scripts\utilities.js" />
+    <Content Include="scripts\bundleTail.js" />
+    <Content Include="scripts\bundleHead.js" />
+    <Content Include="scripts\random.js" />
+    <Content Include="scripts\rsa.js" />
+    <Content Include="scripts\sha256.js" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_0.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_1.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_10.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_11.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_12.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_13.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_14.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_15.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_16.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_17.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_18.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_19.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_2.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_20.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_21.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_22.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_23.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_24.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_25.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_26.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_27.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_28.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_29.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_3.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_30.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_31.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_32.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_33.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_34.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_35.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_36.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_37.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_38.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_39.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_4.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_40.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_41.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_42.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_43.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_44.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_45.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_46.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_47.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_48.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_49.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_5.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_50.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_51.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_52.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_53.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_54.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_55.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_56.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_57.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_58.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_59.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_6.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_60.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_61.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_62.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_63.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_64.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_65.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_66.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_67.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_68.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_69.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_7.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_70.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_71.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_8.txt" />
+    <Content Include="scripts\testVectors\math\jsCryptoTestVector_9.txt" />
+    <Content Include="scripts\testVectors\tv_rsa.js" />
+    <Content Include="scripts\testVectors\tv_sha256_long.js" />
+    <Content Include="scripts\testVectors\tv_sha256_short.js" />
+    <Content Include="scripts\testVectors\tv_sha384_long.js" />
+    <Content Include="scripts\testVectors\tv_sha384_short.js" />
+    <Content Include="scripts\testVectors\tv_sha512_long.js" />
+    <Content Include="scripts\testVectors\tv_sha512_short.js" />
+    <Content Include="scripts\testVectors\tv_sha224_long.js" />
+    <Content Include="scripts\testVectors\tv_sha224_short.js" />
+    <Content Include="tests\CryptoMathTests.html" />
+    <Content Include="tests\DotNetInteropTests.html" />
+    <Content Include="tests\SubtleTests.html" />
+    <None Include="msrcrypto.aes.js.bundle">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="msrcrypto.js.bundle" />
+    <Content Include="scripts\subtle\subtle.js.bundle" />
+    <Content Include="msrcrypto.min.js.map">
+      <DependentUpon>msrcrypto.min.js</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="dotNetWebService\KeyStructs.cs" />
+    <Compile Include="dotNetWebService\DotNetWebService.asmx.cs">
+      <DependentUpon>DotNetWebService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
