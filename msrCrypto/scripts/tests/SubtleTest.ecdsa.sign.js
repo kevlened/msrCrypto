@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -178,6 +178,48 @@ asyncTest("GenerateKey P-384", function () {
     );
 });
 
+asyncTest("GenerateKey P-521", function () {
+
+    var algorithm = { name: "Ecdsa", namedCurve: "P-521" };
+
+    subtle.generateKey(algorithm, true, ["sign", "verify"]).then(
+        function (keyPair) {
+
+            shared.getKeyData(keyPair.publicKey, function (publicKeyObject) {
+
+                shared.getKeyData(keyPair.privateKey, function (priKey, pubKey) {
+
+                    /* The length values in this test are 72, which is 66 (size of p-521 elements) padded to a multiple of 8 (per the code) */
+
+                    start();
+
+                    equal(keyPair.publicKey.type, "public");
+                    equal(keyPair.publicKey.algorithm.name.toLowerCase(), "ecdsa");
+                    equal(keyPair.publicKey.algorithm.namedCurve.toLowerCase(), "p-521");
+
+                    equal(pubKey.kty.toLowerCase(), "ec");
+                    equal(pubKey.crv.toLowerCase(), "p-521");
+                    equal(shared.base64UrlToBytes(pubKey.x).length, 72);
+                    equal(shared.base64UrlToBytes(pubKey.y).length, 72);
+
+                    equal(keyPair.privateKey.type, "private");
+                    equal(keyPair.privateKey.algorithm.name.toLowerCase(), "ecdsa");
+                    equal(keyPair.privateKey.algorithm.namedCurve.toLowerCase(), "p-521");
+
+                    equal(priKey.kty.toLowerCase(), "ec");
+                    equal(priKey.crv.toLowerCase(), "p-521");
+                    equal(shared.base64UrlToBytes(priKey.d).length, 72);
+                    equal(shared.base64UrlToBytes(priKey.x).length, 72);
+                    equal(shared.base64UrlToBytes(priKey.y).length, 72);
+
+                }, publicKeyObject);
+
+            });
+        },
+        shared.error("Generate key error")
+    );
+});
+
 asyncTest("Sign & Verify P-256 SHA-256", function () {
     
     subtle.generateKey({ name: "Ecdsa", namedCurve: "P-256" }, true, ["sign", "verify"]).then(
@@ -259,6 +301,49 @@ asyncTest("Sign & Verify P-384 SHA-256", function () {
         shared.error("Generate key error")
     );
 
+});
+
+asyncTest("Sign & Verify P-521 SHA-256", function () {
+
+    subtle.generateKey({ name: "Ecdsa", namedCurve: "P-521" }, true, ["sign", "verify"]).then(
+
+        function (keyPair) {
+
+            var data = [];
+
+            for (var j = 0; j < Math.random() * 300; j++) {
+                data.push(Math.random() * 256);
+            }
+
+            data = shared.toSupportedArray(data);
+
+            var algorithm = { name: "Ecdsa", namedCurve: "P-521", hash: { name: "SHA-256" } };
+
+            subtle.sign(algorithm, keyPair.privateKey, data).then(
+
+                function (e) {
+
+                    var signatureBytes = shared.toSupportedArray(e);
+
+                    var opVerify = subtle.verify(algorithm, keyPair.publicKey, signatureBytes, data).then(
+
+                        function (e) {
+
+                            var result = e;
+
+                            start();
+
+                            ok(result, "s = " + shared.bytesToHexString(signatureBytes));
+                        },
+                        shared.error("Verify error")
+                    );
+
+                },
+                shared.error("Sign error")
+            );
+        },
+        shared.error("Generate key error")
+    );
 });
 
 asyncTest("Sign & Verify NUMSP256D1 SHA-256", function () {

@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -671,7 +671,7 @@ function MsrcryptoECC() {
             var temp3isZero = true;
 
             for (var i = 0; i < temp3.length; i++) {
-                if (temp3[1] !== 0) {
+                if (temp3[i] !== 0) {
                     temp3isZero = false;
                     break;
                 }
@@ -1115,7 +1115,7 @@ function MsrcryptoECC() {
             // DETERMINE 1/Z IN MONTGOMERY FORM --------------------------------
 
             // Call out to the basic inversion function, not the one in this class.
-            cryptoMath.modInv(point.z, curve.p, conversionTemp2);
+            cryptoMath.modInv(point.z, curve.p, conversionTemp2, true);
 
             if (point.isInMontgomeryForm) {
                 montgomeryMultiply(conversionTemp2, montgomeryMultiplier.rCubedModm, conversionTemp1);
@@ -1367,7 +1367,7 @@ function MsrcryptoECC() {
 
         function normalizeTed(point) {
 
-            cryptoMath.modInv(point.z, curve.p, conversionTemp2);
+            cryptoMath.modInv(point.z, curve.p, conversionTemp2, true);
 
             cryptoMath.modMul(point.x, conversionTemp2, curve.p, point.x);
 
@@ -1579,7 +1579,7 @@ function MsrcryptoECC() {
             modMul(temp1, temp3, p, temp4);
 
             // t4 = 1/12(1-yTE)
-            modInv(temp4, p, temp4);
+            modInv(temp4, p, temp4, true);
 
             // t1 = xTE*(1-yTE)
             modMul(tedPoint.x, temp3, p, temp1);
@@ -1591,7 +1591,7 @@ function MsrcryptoECC() {
             modAdd(temp3, temp3, temp3);
 
             // t3 = 1/4xTE*(1-yTE)
-            modInv(temp3, p, temp3);
+            modInv(temp3, p, temp3, true);
 
             // Xfinal = ((5a-d) + yTE*(a-5d))/12(1-yTE)
             modMul(temp4, temp2, p, wPoint.x);
@@ -1643,7 +1643,7 @@ function MsrcryptoECC() {
             modAdd(temp3, temp3, temp3);
 
             // t3 = 1/6yW
-            modInv(temp3, p, temp3);
+            modInv(temp3, p, temp3, true);
 
             // Xfinal = (6xW - a - d)/6yW
             modMul(temp2, temp3, p, tedPoint.x);
@@ -1680,7 +1680,7 @@ function MsrcryptoECC() {
             modSub(temp1, d, temp1);
 
             // t1 = 1/(12xW + a - 5d)
-            modInv(temp1, p, temp1);
+            modInv(temp1, p, temp1, true);
 
             // Yfinal = (12xW + d - 5a)/(12xW + a - 5d)
             modMul(temp1, temp2, p, tedPoint.y);

@@ -1,7 +1,7 @@
 ﻿
 //*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 /* jshint -W016 */ /* repress binary operator errors */
 /* jshint -W052 */ /* repress complaint about binary NOT operator*/
-var msrCryptoVersion = "1.4";
+var msrCryptoVersion = "1.4.1";
 var msrCrypto = msrCrypto || (function () {
 
 

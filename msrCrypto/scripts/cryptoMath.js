@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -410,6 +410,9 @@ function msrcryptoMath() {
         if (digit !== 0) {
             array[index] = digit;
         }
+
+        // Replace potential undefined elements with zeros
+        while (array[--arrayLength] == null) array[arrayLength] = 0;
 
         return array;
     }
@@ -1032,11 +1035,12 @@ function msrcryptoMath() {
         return normalizeDigitArray(output);
     }
 
-    function modInv(a, n, aInv) {
+    function modInv(a, n, aInv, pad) {
         /// <summary>Modular multiplicative inverse a^-1 mod n.</summary>
         /// <param name="a" type="Array">The number to invert. Condition: a &lt; n, or the result would be n^-1 mod a.</param>
         /// <param name="n" type="Array">The modulus.</param>
         /// <param name="aInv" type="Array" optional="true">a^-1 mod n (optional).</param>
+        /// <param name="pad" type="Boolean" optional="true">True to pad the returned value to the length of the modulus (optional).</param>
         /// <returns type="Array">a^-1 mod n. Same as the aInv parameter if the parameter is specified.</returns>
         //var gcd = eea(a, n, inv);
         var upp = new Array(n.length);
@@ -1056,7 +1060,11 @@ function msrcryptoMath() {
             } else {
                 copyArray(upp, 0, aInv, 0, upp.length); aInv.length = upp.length;
             }
-            normalizeDigitArray(aInv);
+            if (pad) {
+                normalizeDigitArray(aInv, n.length, true);
+            } else {
+                normalizeDigitArray(aInv);
+            }
         }
 
         return aInv;

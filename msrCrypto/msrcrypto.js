@@ -1,6 +1,6 @@
 //*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -15,12 +15,31 @@
 //    limitations under the License.
 //
 //*******************************************************************************
-﻿
 
-var msrCryptoVersion = "1.4";
+/* jshint -W016 */ /* repress binary operator errors */
+/* jshint -W052 */ /* repress complaint about binary NOT operator*/
+var msrCryptoVersion = "1.4.1";
 var msrCrypto = msrCrypto || (function () {
 
+
     "use strict";
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
 var operations = {};
 
@@ -45,10 +64,44 @@ operations.exists = function (operationType, algorithmName) {
 
     return (operations[operationType][algorithmName]) ? true : false;
 };
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global self */
+/* jshint -W098 */
+/* W098 is 'defined but not used'. These properties are used in other scripts. */
+
+/// <reference path="jsCopDefs.js" />
+
+// Sets the url to for this script.
+// We need this to pass to webWorkers later to instantiate them.
+
+/// <dictionary>fprng</dictionary>
+
+/// #endregion JSCop/JsHint
 
 /// Store the URL for this script. We will need this later to instantiate
 /// new web workers (if supported).
 var scriptUrl = (function () {
+
+    /* jshint -W117 */
 
     if (typeof document !== "undefined") {
         // Use error.stack to find out the name of this script
@@ -68,6 +121,8 @@ var scriptUrl = (function () {
 
     // We must be running in an environment without document or self.
     return null;
+
+    /* jshint +W117 */
 
 })();
 
@@ -98,7 +153,7 @@ var setterSupport = (function () {
 //  this can be changes 'on the fly'.
 var asyncMode = webWorkerSupport;
 
-var createProperty = function (parentObject, propertyName, initialValue, getterFunction, setterFunction) {
+var createProperty = function (parentObject, propertyName, /*@dynamic*/initialValue, getterFunction, setterFunction) {
     /// <param name="parentObject" type="Object"/>
     /// <param name="propertyName" type="String"/>
     /// <param name="initialValue" type="Object"/>
@@ -121,8 +176,38 @@ var createProperty = function (parentObject, propertyName, initialValue, getterF
 };
 
 // Collection of hash functions for global availability.
-// Each hash function will add itself to the collection as it is evaluated.
+// Each hashfunction will add itself to the collection as it is evaluated.
 var msrcryptoHashFunctions = {};
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* jshint -W016 */
+
+/// <reference path="global.js" />
+/// <reference path="jsCopDefs.js" />
+
+/// <dictionary>
+///    msrcrypto, Btoa, uint, hexval, res, xor
+/// </dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoUtilities = (function () {
 
@@ -627,6 +712,41 @@ var msrcryptoUtilities = (function () {
     };
 
 })();
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global fprngEntropyProvided: true */
+/* global runningInWorkerInstance */
+/* global self */
+/* global operations */
+
+/// <reference path="jsCopDefs.js" />
+/// <reference path="global.js" />
+/// <reference path="random.js" />
+
+/// <dictionary>
+///    msrcrypto, webworker, func, onmessage, prng
+/// </dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoWorker = (function () {
 
@@ -641,7 +761,7 @@ var msrcryptoWorker = (function () {
 
     return {
 
-        jsCryptoRunner: function ( e) {
+        jsCryptoRunner: function (/*@type(typeEvent)*/ e) {
 
             var operation = e.data.operationType;
             var result;
@@ -652,7 +772,7 @@ var msrcryptoWorker = (function () {
 
             var func = operations[operation][e.data.algorithm.name];
 
-            var p = e.data;
+            var /*@dynamic*/ p = e.data;
 
             if (p.operationSubType === "process") {
                 func(p);
@@ -673,7 +793,7 @@ var msrcryptoWorker = (function () {
 //   we don't want to override self.onmessage.
 if (runningInWorkerInstance) {
 
-    self.onmessage = function ( e) {
+    self.onmessage = function (/*@type(typeEvent)*/e) {
 
         // When this worker first gets instantiated we will receive seed data
         //   for this workers prng.
@@ -687,6 +807,35 @@ if (runningInWorkerInstance) {
         msrcryptoWorker.jsCryptoRunner(e);
     };
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+
+/// <reference path="utilities.js" />
+
+/// <dictionary>alg,Jwk,msrcrypto,utils</dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoJwk = (function () {
 
@@ -824,6 +973,7 @@ var msrcryptoJwk = (function () {
     // 'jwkKeyData' is an array of bytes. Each byte is a charCode for a json key string
     function jwkToKey(keyData, algorithm, propsToArray) {
 
+
         // Convert the json string to an object
         var jsonKeyObject = JSON.parse(JSON.stringify(keyData)); //JSON.parse(jsonString);
 
@@ -845,6 +995,36 @@ var msrcryptoJwk = (function () {
         jwkToKey: jwkToKey
     };
 })();
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+/* jshint -W016 */ /* allows bitwise operators */
+/* jshint -W052 */ /* allows not operator */
+
+/// <reference path="jsCopDefs.js" />
+/// <reference path="global.js" />
+/// <reference path="random.js" />
+
+/// <dictionary>alg,bitmasks,coord,De-montgomeryized,digitbits,digitmask,divrem,Elt,endian-ness,endian,gcd,goto,Int,Jacobian,Legendre,mlen,Modm,modpow,montgomerized,montgomeryize,montgomeryized,montmul,mul,param,Pomerance,povar,precompute,Pseudocode,Tolga,typeof,Uint,unrollsentinel,wil,Xout,Xout-t,Yout,Zout</dictionary>
+/// <dictionary>aequals,Eshift,idx,Lsbit,Minust,mult,myelement,myresult,naf,Neg,Nist,numcopy,Obj,onemontgomery,Precomputation,Res,swaptmp,Tmp,xbytes,ybytes</dictionary>
+
+/// #endregion JSCop/JsHint
 
 function msrcryptoMath() {
     // 'number' of bits per digit. Must be even.
@@ -869,7 +1049,7 @@ function msrcryptoMath() {
     var One = [1];
 
     // Create an array, mimics the constructors for typed arrays.
-    function createArray( parameter) {
+    function createArray(/*@dynamic*/parameter) {
         var i, array = null;
         if (!arguments.length || typeof arguments[0] === "number") {
             // A number.
@@ -927,7 +1107,7 @@ function msrcryptoMath() {
             multiply(num, radix, buffer);
 
             // 'num' = 'buffer' + 'char'
-            add(buffer, [ char], num);
+            add(buffer, [/*@static_cast(Number)*/char], num);
             normalizeDigitArray(num);
         }
 
@@ -984,7 +1164,7 @@ function msrcryptoMath() {
             divRem(a, divisor, quotient, remainder, temp1, temp2);
             normalizeDigitArray(quotient, a.length, true);
 
-            var newDigits = remainder[0].toString(radix);
+            var /*@type(String) */ newDigits = remainder[0].toString(radix);
             sb = pad.substring(0, pad.length - newDigits.length) + newDigits + sb;
 
             var swap = a;
@@ -1154,7 +1334,7 @@ function msrcryptoMath() {
             & (DIGIT_MASK >>> (DIGIT_BITS - count));
     }
 
-    function copyArray( source, sourceIndex, destination, destIndex, length) {
+    function copyArray(/*@Array*/source, sourceIndex, /*@Array*/destination, destIndex, length) {
         /// <summary>Copies a range of elements from one array to another array.</summary>
         /// <param name="source" type="Array">Source array to copy from.</param>
         /// <param name="sourceIndex" type="Number">The index in the source array at which copying begins.</param>
@@ -1227,6 +1407,9 @@ function msrcryptoMath() {
         if (digit !== 0) {
             array[index] = digit;
         }
+
+        // Replace potential undefined elements with zeros
+        while (array[--arrayLength] == null) array[arrayLength] = 0;
 
         return array;
     }
@@ -1505,7 +1688,7 @@ function msrcryptoMath() {
         return carry;
     }
 
-    function multiply(multiplicant, multiplier, product) {
+    function multiply(multiplicant, /* @dynamic */multiplier, product) {
         /// <summary>Multiply two arrays of digits into a third array using schoolbook.</summary>
         /// <param name="multiplicant" type="Array">Multiplicand.</param>
         /// <param name="multiplier">Multiplier.</param>
@@ -1691,7 +1874,7 @@ function msrcryptoMath() {
         return remainder;
     }
 
-    function modMul(multiplicant, multiplier, modulus, product, temp1, temp2) {
+    function modMul(multiplicant, /*@dynamic*/multiplier, modulus, product, temp1, temp2) {
         /// <summary>Moduler multiplication of two numbers for a modulus. This function uses multiply and divide method,
         /// and should not be used for repetitive operations.
         /// product can be same as multiplicant and multiplier.</summary>
@@ -1849,11 +2032,12 @@ function msrcryptoMath() {
         return normalizeDigitArray(output);
     }
 
-    function modInv(a, n, aInv) {
+    function modInv(a, n, aInv, pad) {
         /// <summary>Modular multiplicative inverse a^-1 mod n.</summary>
         /// <param name="a" type="Array">The number to invert. Condition: a &lt; n, or the result would be n^-1 mod a.</param>
         /// <param name="n" type="Array">The modulus.</param>
         /// <param name="aInv" type="Array" optional="true">a^-1 mod n (optional).</param>
+        /// <param name="pad" type="Boolean" optional="true">True to pad the returned value to the length of the modulus (optional).</param>
         /// <returns type="Array">a^-1 mod n. Same as the aInv parameter if the parameter is specified.</returns>
         //var gcd = eea(a, n, inv);
         var upp = new Array(n.length);
@@ -1873,7 +2057,11 @@ function msrcryptoMath() {
             } else {
                 copyArray(upp, 0, aInv, 0, upp.length); aInv.length = upp.length;
             }
-            normalizeDigitArray(aInv);
+            if (pad) {
+                normalizeDigitArray(aInv, n.length, true);
+            } else {
+                normalizeDigitArray(aInv);
+            }
         }
 
         return aInv;
@@ -2041,7 +2229,7 @@ function msrcryptoMath() {
             return;
         }
 
-        function convertToMontgomeryForm( digits) {
+        function convertToMontgomeryForm(/*@type(Digits)*/digits) {
             /// <summary>Convert the digits in standard form to Montgomery residue representation.</summary>
             /// <param name="digits" type="Array">Input digits to convert, and also the output converted digits.</param>
 
@@ -2488,14 +2676,48 @@ function msrcryptoMath() {
 
 var cryptoMath = cryptoMath || msrcryptoMath();
 
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
 /// cryptoECC.js ==================================================================================
 /// Implementation of Elliptic Curve math routines for cryptographic applications.
+
+/// #region JSCop/JsHint
+/* global createProperty */
+/* global cryptoMath */
+/* global setterSupport */
+/* jshint -W016 */ /* allows bitwise operators */
+/* jshint -W052 */ /* allows not operator */
+
+/// <reference path="jsCopDefs.js" />
+/// <reference path="global.js" />
+/// <reference path="random.js" />
+
+/// <dictionary>alg,bitmasks,coord,De-montgomeryized,digitbits,digitmask,divrem,dont,Elt,endian-ness,endian,gcd,goto,gotta,Int,Jacobi,Jacobian,Legendre,mlen,Modm,modpow,montgomerized,montgomeryize,montgomeryized,montmul,mul,param,Pomerance,povar,precompute,Pseudocode,Tolga,typeof,Uint,unrollsentinel,wil,Xout,Xout-t,Yout,Zout</dictionary>
+/// <dictionary>aequals,Eshift,idx,Lsbit,Minust,mult,myelement,myresult,naf,Neg,Nist,numcopy,Obj,onemontgomery,Precomputation,Res,swaptmp,Tmp,xbytes,ybytes</dictionary>
+
+/// #endregion JSCop/JsHint
 
 function MsrcryptoECC() {
     /// <summary>Elliptic Curve Cryptography (ECC) functions.</summary>
 
     // Create an array, mimics the constructors for typed arrays.
-    function createArray( parameter) {
+    function createArray(/*@dynamic*/parameter) {
         var i, array = null;
         if (!arguments.length || typeof arguments[0] === "number") {
             // A number.
@@ -2618,7 +2840,7 @@ function MsrcryptoECC() {
             isInMontgomeryForm = false;
         }
 
-        function equals( ellipticCurvePointFp) {
+        function equals(/*@type(EllipticCurvePointFp)*/ellipticCurvePointFp) {
             /// <param name="ellipticCurvePointFp" type="EllipticCurvePointFp"/>
 
             // If null
@@ -2653,7 +2875,7 @@ function MsrcryptoECC() {
                     returnObj.isInMontgomeryForm === ellipticCurvePointFp.isInMontgomeryForm);
         }
 
-        function copyTo( source, destination) {
+        function copyTo(/*@type(EllipticCurvePointFp)*/ source, /*@type(EllipticCurvePointFp)*/ destination) {
             /// <param name="source" type="EllipticCurvePointFp"/>
             /// <param name="destination" type="EllipticCurvePointFp"/>
 
@@ -2693,7 +2915,7 @@ function MsrcryptoECC() {
             return clonePoint;
         }
 
-        returnObj = {
+        returnObj = /*@static_cast(EllipticCurvePointFp)*/ {
             equals: function (ellipticCurvePointFp) {
                 return equals(ellipticCurvePointFp);
             },
@@ -2785,7 +3007,7 @@ function MsrcryptoECC() {
             cryptoMath.modInv(number, m_curve.p, result);
         }
 
-        function modDivByTwo( dividend, result) {
+        function modDivByTwo( /*@type(Digits)*/ dividend,  /*@type(Digits)*/ result) {
 
             var s = dividend.length;
 
@@ -3033,6 +3255,9 @@ function MsrcryptoECC() {
                 throw new Error("Given point must be in Montgomery form. Use montgomeryize() first.");
             }
 
+
+
+
             // Currently we support only two curve types, those with A=-3, and
             // those with A=0. In the future we will implement general support.
             // For now we switch here, assuming that the curve was validated in
@@ -3124,7 +3349,7 @@ function MsrcryptoECC() {
             var temp3isZero = true;
 
             for (var i = 0; i < temp3.length; i++) {
-                if (temp3[1] !== 0) {
+                if (temp3[i] !== 0) {
                     temp3isZero = false;
                     break;
                 }
@@ -3568,7 +3793,7 @@ function MsrcryptoECC() {
             // DETERMINE 1/Z IN MONTGOMERY FORM --------------------------------
 
             // Call out to the basic inversion function, not the one in this class.
-            cryptoMath.modInv(point.z, curve.p, conversionTemp2);
+            cryptoMath.modInv(point.z, curve.p, conversionTemp2, true);
 
             if (point.isInMontgomeryForm) {
                 montgomeryMultiply(conversionTemp2, montgomeryMultiplier.rCubedModm, conversionTemp1);
@@ -3820,7 +4045,7 @@ function MsrcryptoECC() {
 
         function normalizeTed(point) {
 
-            cryptoMath.modInv(point.z, curve.p, conversionTemp2);
+            cryptoMath.modInv(point.z, curve.p, conversionTemp2, true);
 
             cryptoMath.modMul(point.x, conversionTemp2, curve.p, point.x);
 
@@ -3849,8 +4074,10 @@ function MsrcryptoECC() {
             // Ta = z1^2 
             cryptoMath.modMul(point.z, point.z, point.curve.p, point.ta);
 
+
             // (new) Tbfinal = Y1^2-X1^2
             modSub(temp1, temp0, outputPoint.tb);
+
 
             //(new) t0 = X1^2+Y1^2 
             modAdd(temp0, temp1, temp0);
@@ -3893,6 +4120,7 @@ function MsrcryptoECC() {
             if (typeof point2.ta === 'undefined') {
                 throw new Error("Point2 should be in Extended Projective form.");
             }
+
 
             var qq = convert_R1_to_R2(point1);
 
@@ -4029,7 +4257,7 @@ function MsrcryptoECC() {
             modMul(temp1, temp3, p, temp4);
 
             // t4 = 1/12(1-yTE)
-            modInv(temp4, p, temp4);
+            modInv(temp4, p, temp4, true);
 
             // t1 = xTE*(1-yTE)
             modMul(tedPoint.x, temp3, p, temp1);
@@ -4041,7 +4269,7 @@ function MsrcryptoECC() {
             modAdd(temp3, temp3, temp3);
 
             // t3 = 1/4xTE*(1-yTE)
-            modInv(temp3, p, temp3);
+            modInv(temp3, p, temp3, true);
 
             // Xfinal = ((5a-d) + yTE*(a-5d))/12(1-yTE)
             modMul(temp4, temp2, p, wPoint.x);
@@ -4093,7 +4321,7 @@ function MsrcryptoECC() {
             modAdd(temp3, temp3, temp3);
 
             // t3 = 1/6yW
-            modInv(temp3, p, temp3);
+            modInv(temp3, p, temp3, true);
 
             // Xfinal = (6xW - a - d)/6yW
             modMul(temp2, temp3, p, tedPoint.x);
@@ -4130,7 +4358,7 @@ function MsrcryptoECC() {
             modSub(temp1, d, temp1);
 
             // t1 = 1/(12xW + a - 5d)
-            modInv(temp1, p, temp1);
+            modInv(temp1, p, temp1, true);
 
             // Yfinal = (12xW + d - 5a)/(12xW + a - 5d)
             modMul(temp1, temp2, p, tedPoint.y);
@@ -4188,7 +4416,7 @@ function MsrcryptoECC() {
 
     var sec1EncodingFp = function () {
         return {
-            encodePoint: function ( point) {
+            encodePoint: function (/*@type(EllipticCurvePointFp)*/ point) {
                 /// <summary>Encode an EC point without compression.
                 /// This function encodes a given points into a bytes array containing 0x04 | X | Y, where X and Y are big endian bytes of x and y coordinates.</summary>
                 /// <param name="point" type="EllipticCurvePointFp">Input EC point to encode.</param>
@@ -4444,6 +4672,28 @@ function MsrcryptoECC() {
 
 var cryptoECC = cryptoECC || MsrcryptoECC();
 
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+/* global cryptoECC */
+/// #endregion JSCop/JsHint
+
 var curve_P256 = {
     name: "P-256",
     type: 0, // Curve Type 0 = Weierstrass, 1 Twisted Edwards
@@ -4471,12 +4721,12 @@ var curve_P384 = {
 var curve_P521 = {
     name: "P-521",
     type: 0, // Curve Type 0 = Weierstrass, 1 Twisted Edwards
-    p: [0x10, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF],
-    a: [0x10, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC],
-    b: [0x51, 0x95, 0x3E, 0xB9, 0x61, 0x8E, 0x1C, 0x9A, 0x1F, 0x92, 0x9A, 0x21, 0xA0, 0xB6, 0x85, 0x40, 0xEE, 0xA2, 0xDA, 0x72, 0x5B, 0x99, 0xB3, 0x15, 0xF3, 0xB8, 0xB4, 0x89, 0x91, 0x8E, 0xF1, 0x90, 0xE1, 0x56, 0x19, 0x39, 0x51, 0xEC, 0x7E, 0x93, 0x7B, 0x16, 0x52, 0xC0, 0xBD, 0x3B, 0xB1, 0xBF, 0x70, 0x35, 0x73, 0xDF, 0x88, 0x3D, 0x2C, 0x34, 0xF1, 0xEF, 0x45, 0x1F, 0xD4, 0x6B, 0x50, 0x3F, 0x00],
-    order: [0x10, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFA, 0x51, 0x86, 0x87, 0x83, 0xBF, 0x2F, 0x96, 0x6B, 0x7F, 0xCC, 0x10, 0x48, 0xF7, 0x90, 0xA5, 0xD0, 0x3B, 0xB5, 0xC9, 0xB8, 0x89, 0x9C, 0x47, 0xAE, 0xBB, 0x6F, 0xB7, 0x1E, 0x91, 0x38, 0x64, 0x90],
-    gx: [0xC6, 0x85, 0x8E, 0x60, 0xB7, 0x40, 0x40, 0xE9, 0xCD, 0x9E, 0x3E, 0xCB, 0x66, 0x23, 0x95, 0xB4, 0x42, 0x9C, 0x64, 0x81, 0x39, 0x50, 0x3F, 0xB5, 0x21, 0xF8, 0x28, 0xAF, 0x60, 0x6B, 0x4D, 0x3D, 0xBA, 0xA1, 0x4B, 0x5E, 0x77, 0xEF, 0xE7, 0x59, 0x28, 0xFE, 0x1D, 0xC1, 0x27, 0xA2, 0xFF, 0xA8, 0xDE, 0x33, 0x48, 0xB3, 0xC1, 0x85, 0x6A, 0x42, 0x9B, 0xF9, 0x7E, 0x7E, 0x31, 0xC2, 0xE5, 0xBD, 0x66],
-    gy: [0x10, 0x18, 0x39, 0x29, 0x6A, 0x78, 0x9A, 0x3B, 0xC0, 0x40, 0x5C, 0x8A, 0x5F, 0xB4, 0x2C, 0x7D, 0x1B, 0xD9, 0x98, 0xF5, 0x44, 0x49, 0x57, 0x9B, 0x44, 0x68, 0x17, 0xAF, 0xBD, 0x17, 0x27, 0x3E, 0x66, 0x2C, 0x97, 0xEE, 0x72, 0x99, 0x5E, 0xF4, 0x26, 0x40, 0xC5, 0x50, 0xB9, 0x10, 0x3F, 0xAD, 0x70, 0x61, 0x35, 0x3C, 0x70, 0x86, 0xA2, 0x72, 0xC2, 0x40, 0x88, 0xBE, 0x94, 0x76, 0x9F, 0xD1, 0x66, 0x50],
+    p: [0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF],
+    a: [0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC],
+    b: [0x00, 0x51, 0x95, 0x3E, 0xB9, 0x61, 0x8E, 0x1C, 0x9A, 0x1F, 0x92, 0x9A, 0x21, 0xA0, 0xB6, 0x85, 0x40, 0xEE, 0xA2, 0xDA, 0x72, 0x5B, 0x99, 0xB3, 0x15, 0xF3, 0xB8, 0xB4, 0x89, 0x91, 0x8E, 0xF1, 0x09, 0xE1, 0x56, 0x19, 0x39, 0x51, 0xEC, 0x7E, 0x93, 0x7B, 0x16, 0x52, 0xC0, 0xBD, 0x3B, 0xB1, 0xBF, 0x07, 0x35, 0x73, 0xDF, 0x88, 0x3D, 0x2C, 0x34, 0xF1, 0xEF, 0x45, 0x1F, 0xD4, 0x6B, 0x50, 0x3F, 0x00],
+    order: [0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFA, 0x51, 0x86, 0x87, 0x83, 0xBF, 0x2F, 0x96, 0x6B, 0x7F, 0xCC, 0x01, 0x48, 0xF7, 0x09, 0xA5, 0xD0, 0x3B, 0xB5, 0xC9, 0xB8, 0x89, 0x9C, 0x47, 0xAE, 0xBB, 0x6F, 0xB7, 0x1E, 0x91, 0x38, 0x64, 0x09],
+    gx: [0x00, 0xC6, 0x85, 0x8E, 0x06, 0xB7, 0x04, 0x04, 0xE9, 0xCD, 0x9E, 0x3E, 0xCB, 0x66, 0x23, 0x95, 0xB4, 0x42, 0x9C, 0x64, 0x81, 0x39, 0x05, 0x3F, 0xB5, 0x21, 0xF8, 0x28, 0xAF, 0x60, 0x6B, 0x4D, 0x3D, 0xBA, 0xA1, 0x4B, 0x5E, 0x77, 0xEF, 0xE7, 0x59, 0x28, 0xFE, 0x1D, 0xC1, 0x27, 0xA2, 0xFF, 0xA8, 0xDE, 0x33, 0x48, 0xB3, 0xC1, 0x85, 0x6A, 0x42, 0x9B, 0xF9, 0x7E, 0x7E, 0x31, 0xC2, 0xE5, 0xBD, 0x66],
+    gy: [0x01, 0x18, 0x39, 0x29, 0x6A, 0x78, 0x9A, 0x3B, 0xC0, 0x04, 0x5C, 0x8A, 0x5F, 0xB4, 0x2C, 0x7D, 0x1B, 0xD9, 0x98, 0xF5, 0x44, 0x49, 0x57, 0x9B, 0x44, 0x68, 0x17, 0xAF, 0xBD, 0x17, 0x27, 0x3E, 0x66, 0x2C, 0x97, 0xEE, 0x72, 0x99, 0x5E, 0xF4, 0x26, 0x40, 0xC5, 0x50, 0xB9, 0x01, 0x3F, 0xAD, 0x07, 0x61, 0x35, 0x3C, 0x70, 0x86, 0xA2, 0x72, 0xC2, 0x40, 0x88, 0xBE, 0x94, 0x76, 0x9F, 0xD1, 0x66, 0x50],
     cf: 1  // co-factor
 };
 
@@ -4486,6 +4736,27 @@ if (typeof cryptoECC !== 'undefined') {
     cryptoECC.curves["P-384"] = curve_P384;
     cryptoECC.curves["P-521"] = curve_P521;
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+/* global cryptoECC */
+/// #endregion JSCop/JsHint
 
 var curve_BN254 = {
     name: "BN-254",
@@ -4503,6 +4774,29 @@ if (typeof cryptoECC !== 'undefined') {
     // Add curves to ECC object
     cryptoECC.curves["BN-254"] = curve_BN254;
 }
+
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+/* global cryptoECC */
+/// #endregion JSCop/JsHint
 
 //
 // "numsp256d1": Weierstrass curve a=-3, E: y^2 = x^3 - 3x + 152961, p = 2^256-189
@@ -4617,14 +4911,109 @@ var curve_numsp384t1 = {
     cf: 4
 };
 
+//
+// "numsp512d1": Weierstrass curve a=-3, E: y^2 = x^3 - 3x + 121243, p = 2^512-569
+//
+var curve_numsp512d1 = {
+    // Curve ID, 2 x targeted security level, order bitlength, prime bitlength
+    info: ['numsp512d1', 512, 512, 512],
+    // Name
+    name: "numsp512d1",
+    // Curve Type 0 = Weierstrass, 1 Twisted Edwards
+    type: 0,
+    // Prime p = 2^512-569
+    p: [0xC7, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF].reverse(),
+    // Parameter "a"
+    a: [0xC4, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF].reverse(),
+    // Parameter "b"
+    b: [0x9B, 0xD9, 0x01].reverse(),
+    // Order of the group
+    order: [0x5d, 0x55, 0x33, 0x04, 0x39, 0x3f, 0x15, 0xce, 0x43, 0xd2, 0x7c, 0x60, 0x36, 0x8b, 0x56, 0x3b, 0xc6, 0xbd, 0xd0, 0x97, 0xed, 0x58, 0xc2, 0x4f, 0x1b, 0x83, 0xe7, 0x94, 0xfb, 0xa4, 0x3c, 0x5b,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff].reverse(),
+    // x(generator)
+    gx: [0x57, 0xAE, 0xAB, 0x8C, 0x95, 0x87, 0x82, 0xDC, 0xE2, 0x5D, 0x6F, 0x7D, 0x13, 0x60, 0x5D, 0x1D, 0x83, 0x15, 0x56, 0x25, 0x86, 0x42, 0x79, 0x93, 0x9E, 0x35, 0x6B, 0x07, 0x51, 0xA1, 0x21, 0x50,
+        0xF9, 0xD9, 0x06, 0x53, 0xC2, 0xE0, 0x06, 0x45, 0x85, 0xF6, 0x01, 0xB5, 0x3B, 0xD8, 0xCA, 0x98, 0x52, 0x3B, 0x3D, 0xA0, 0x02, 0x70, 0x2B, 0xDA, 0x93, 0x0A, 0x1D, 0x14, 0x47, 0x34, 0xC0, 0x3A].reverse(),
+    // y(generator)
+    gy: [0xA6, 0x27, 0x35, 0x38, 0x60, 0x87, 0xA0, 0x23, 0xE9, 0x0F, 0xFD, 0x4C, 0x1E, 0x5C, 0x2B, 0xCF, 0x02, 0x56, 0x5A, 0xB2, 0x40, 0xA8, 0x21, 0xC1, 0xE9, 0xED, 0x0E, 0x8B, 0xDA, 0x15, 0x84, 0xA2,
+        0x14, 0x4F, 0xD1, 0x7B, 0x0C, 0x26, 0x4B, 0x8F, 0x8C, 0xBB, 0xBC, 0xAB, 0xDE, 0xDB, 0x97, 0x4B, 0x00, 0xB1, 0xEB, 0x63, 0xDC, 0xEE, 0x0E, 0xCE, 0xB3, 0x56, 0xAD, 0x29, 0xCA, 0x54, 0x3A, 0x94].reverse(),
+    // co-factor
+    cf: 4
+}
+
+//
+// "numsp512t1": twisted Edwards curve a=1, E: x^2 + y^2 = 1 - 78296x^2y^2, p = 2^512-569
+//
+var curve_numsp512t1 = {
+    // Curve ID, , 2 x targeted security level, order bitlength, prime bitlength
+    info: ['numsp512t1', 512, 510, 512],
+    // Name
+    name: "numsp512t1",
+    // Curve Type 0 = Weierstrass, 1 Twisted Edwards
+    type: 1,
+    // Prime p = 2^512-569
+    p: [0xC7, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF].reverse(),
+    // Parameter "a"
+    a: [0x01].reverse(),
+    // Parameter "d"
+    d: [0xEF, 0xCB, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF].reverse(),
+    // Order of the subgroup
+    order: [0x6D, 0xD4, 0xEE, 0x1B, 0xF5, 0x8C, 0x46, 0x67, 0xFF, 0xEC, 0xEF, 0x6D, 0x78, 0x05, 0x46, 0x2A, 0xF5, 0x86, 0xB6, 0x70, 0xC9, 0xD8, 0x3F, 0x9E, 0xBA, 0x91, 0xCF, 0x2F, 0x6D, 0x63, 0xF0, 0xB4,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x3F].reverse(),
+    // x(generator)
+    gx: [0xFE, 0x57, 0xEC, 0x99, 0x29, 0xAB, 0xB9, 0xC5, 0x15, 0xF0, 0xC4, 0x7C, 0x42, 0x25, 0xE5, 0x0F, 0xAD, 0x04, 0x89, 0x56, 0x92, 0xC9, 0xBD, 0x78, 0x0F, 0x73, 0x46, 0xEE, 0x4E, 0xC1, 0x21, 0x46,
+        0x47, 0x81, 0x3B, 0x27, 0xBE, 0x7E, 0xA1, 0x27, 0x82, 0xA3, 0xC4, 0x4D, 0x9F, 0xE7, 0xD1, 0x2F, 0x33, 0xC5, 0xD3, 0x88, 0x78, 0xCB, 0x18, 0x7A, 0x9C, 0xB6, 0x8D, 0x12, 0x6D, 0x31, 0x8E, 0xDF].reverse(),
+    // y(generator)
+    gy: [0xE1, 0xF5, 0xE2, 0xC1, 0xC0, 0xDE, 0x6D, 0x32, 0x1F, 0xD0, 0xF1, 0x9B, 0x8A, 0xD3, 0x66, 0x02, 0xFD, 0xC1, 0xEC, 0x2A, 0x86, 0x06, 0x1A, 0x60, 0x62, 0x35, 0x96, 0xE9, 0xF2, 0x53, 0xCA, 0x20,
+        0x41, 0x83, 0x9E, 0x90, 0x95, 0x6B, 0x2B, 0xA9, 0x22, 0x9D, 0x25, 0xD8, 0x26, 0xF7, 0x76, 0xE4, 0x6E, 0x25, 0x2A, 0xA8, 0x77, 0xF5, 0xB0, 0x98, 0x71, 0xCA, 0x49, 0x9D, 0xF3, 0xBF, 0x09, 0x6D].reverse(),
+    // co-factor
+    cf: 4
+}
+
 if (typeof cryptoECC !== 'undefined') {
     // Add curves to ECC object - use uppercase names
     cryptoECC.curves["NUMSP256D1"] = curve_numsp256d1;
     cryptoECC.curves["NUMSP384D1"] = curve_numsp384d1;
+    cryptoECC.curves["NUMSP512D1"] = curve_numsp512t1;
     cryptoECC.curves["NUMSP256T1"] = curve_numsp256t1;
     cryptoECC.curves["NUMSP384T1"] = curve_numsp384t1;
-
+    cryptoECC.curves["NUMSP512T1"] = curve_numsp512t1;
 }
+/// #region JSCop/JsHint
+
+/// <disable>
+/// JS2025.InsertSpaceBeforeCommentText,
+/// JS2027.PunctuateCommentsCorrectly,
+/// JS2074.IdentifierNameIsMisspelled,
+/// JS3056.DeclareVariablesOnceOnly,
+/// JS3053.IncorrectNumberOfArguments,
+/// JS2005.UseShortFormInitializations,
+/// JS2073.CommentIsMisspelled,
+/// JS3092.DeclarePropertiesBeforeUse
+/// </disable>
+
+/// #endregion JSCop/JsHint
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
 function BlockFunctionTypeDef(message, blockIndex, initialHashValues, k, w) {
     /// <signature>
@@ -4809,6 +5198,7 @@ var msrcryptoSha = function (name, der, h, k, blockBytes, blockFunction, truncat
 
 };
 
+/// <disable>
 /// JS2025.InsertSpaceBeforeCommentText,
 /// JS2027.PunctuateCommentsCorrectly,
 /// JS2005.UseShortFormInitializations,
@@ -4819,6 +5209,39 @@ var msrcryptoSha = function (name, der, h, k, blockBytes, blockFunction, truncat
 /// JS2074.IdentifierNameIsMisspelled,
 /// JS3055.InconsistentReturnType
 /// </disable>
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* jshint -W016 */
+/* jshint -W052 */
+
+/// <reference path="operations.js" />
+/// <reference path="sha.js" />
+/// 
+/// <dictionary>msrcrypto, der, sha</dictionary>
+
+/// <disable>JS3057.AvoidImplicitTypeCoercion</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoSha1 = (function () {
 
@@ -4896,7 +5319,7 @@ var msrcryptoSha1 = (function () {
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoSha1.hash = function ( p) {
+    msrcryptoSha1.hash = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha1.sha1.process(p.buffer);
@@ -4916,6 +5339,38 @@ if (typeof operations !== "undefined") {
 }
 
 msrcryptoHashFunctions["sha-1"] = msrcryptoSha1.sha1;
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* jshint -W016 */
+/* jshint -W052 */
+
+/// <reference path="operations.js" />
+
+/// <dictionary>msrcrypto, der, sha</dictionary>
+
+/// <disable>JS3057.AvoidImplicitTypeCoercion</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoSha256 = (function () {
 
@@ -5022,7 +5477,7 @@ var msrcryptoSha256 = (function () {
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoSha256.hash256 = function ( p) {
+    msrcryptoSha256.hash256 = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha256.sha256.process(p.buffer);
@@ -5037,7 +5492,7 @@ if (typeof operations !== "undefined") {
 
     };
 
-    msrcryptoSha256.hash224 = function ( p) {
+    msrcryptoSha256.hash224 = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha256.sha224.process(p.buffer);
@@ -5058,6 +5513,37 @@ if (typeof operations !== "undefined") {
 
 msrcryptoHashFunctions["sha-224"] = msrcryptoSha256.sha224;
 msrcryptoHashFunctions["sha-256"] = msrcryptoSha256.sha256;
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* global msrcryptoUtilities */
+/* jshint -W016 */
+/* jshint -W052 */
+
+/// <reference path="operations.js" />
+/// <reference path="utilities.js" />
+
+/// <dictionary>msrcrypto, der, sha, uint, int, maj</dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoSha512 = (function () {
 
@@ -5265,7 +5751,7 @@ var msrcryptoSha512 = (function () {
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoSha512.hash384 = function ( p) {
+    msrcryptoSha512.hash384 = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha512.sha384.process(p.buffer);
@@ -5280,7 +5766,7 @@ if (typeof operations !== "undefined") {
 
     };
 
-    msrcryptoSha512.hash512 = function ( p) {
+    msrcryptoSha512.hash512 = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha512.sha512.process(p.buffer);
@@ -5301,6 +5787,44 @@ if (typeof operations !== "undefined") {
 
 msrcryptoHashFunctions["sha-384"] = msrcryptoSha512.sha384;
 msrcryptoHashFunctions["sha-512"] = msrcryptoSha512.sha512;
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* global msrcryptoSha256 */
+/* global msrcryptoSha512 */
+/* global msrcryptoJwk */
+/* global msrcryptoPseudoRandom */
+/* jshint -W016 */
+
+/// <reference path="sha256.js" />
+/// <reference path="sha512.js" />
+/// <reference path="operations.js" />
+/// <reference path="random.js" />
+/// <reference path="jwk.js" />
+
+/// <dictionary>Hmac,ipad,msrcrypto,opad,sha,xor</dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoHmac = (function () {
 
@@ -5320,7 +5844,7 @@ var msrcryptoHmac = (function () {
         sha1 = msrcryptoSha1;
     }
 
-    var hashFunction;
+    var /*@dynamic*/ hashFunction;
     var blockSize;
     var keyBytes;
 
@@ -5593,6 +6117,37 @@ if (typeof operations !== "undefined") {
     operations.register("sign", "hmac", msrcryptoHmac.signHmac);
     operations.register("verify", "hmac", msrcryptoHmac.verifyHmac);
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */ /* allows bitwise operators */
+
+/// <reference path="utilities.js" />
+
+/// <dictionary>
+///    msrcrypto,aes,mult,rcon,res,tmp,xor
+/// </dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoBlockCipher = (function()  {
 
@@ -5610,7 +6165,7 @@ var msrcryptoBlockCipher = (function()  {
     return {
 
         /// <summary>Advanced Encryption Standard implementation per FIPS 197.</summary>
-        aes: function ( keyBytes) {
+        aes: function ( /*@type(Array)*/ keyBytes) {
 
             // Set up the constants the first time we create an AES object only.
             if (!aesConstants) {
@@ -5729,24 +6284,24 @@ var msrcryptoBlockCipher = (function()  {
                 return [a[0] ^ b[0], a[1] ^ b[1], a[2] ^ b[2], a[3] ^ b[3]];
             };
 
-            var addRoundKey = function ( state, keySchedule, offset) {
+            var addRoundKey = function (/*@type(Array)*/state, keySchedule, offset) {
                 for (var i = 0 ; i < state.length ; i += 1) {
                     state[i] ^= keySchedule[i + offset];
                 }
             };
 
-            var rotWord = function ( word) {
+            var rotWord = function (/*@type(Array)*/word) {
                 var a = word[0];
                 word[0] = word[1]; word[1] = word[2]; word[2] = word[3]; word[3] = a;
             };
 
-            var subWord = function ( word) {
+            var subWord = function (/*@type(Array)*/word) {
                 for (var i = 0 ; i < word.length ; i += 1) {
                     word[i] = sBoxTable[word[i]];
                 }
             };
 
-            var invSubWord = function ( word) {
+            var invSubWord = function (/*@type(Array)*/word) {
                 for (var i = 0 ; i < word.length ; i += 1) {
                     word[i] = invSBoxTable[word[i]];
                 }
@@ -5756,7 +6311,7 @@ var msrcryptoBlockCipher = (function()  {
                 return [tab[4 * i], tab[4 * i + 1], tab[4 * i + 2], tab[4 * i + 3]];
             };
 
-            var setWord = function ( left, right, indexL, indexR) {
+            var setWord = function (/*@type(Array)*/left, /*@type(Array)*/right, indexL, indexR) {
                 left[4 * indexL] = right[4 * indexR];
                 left[4 * indexL + 1] = right[4 * indexR + 1];
                 left[4 * indexL + 2] = right[4 * indexR + 2];
@@ -5842,6 +6397,46 @@ var msrcryptoBlockCipher = (function()  {
     };
 
 })();
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoJwk */
+/* global operations */
+/* global msrcryptoUtilities */
+/* global msrcryptoBlockCipher */
+/* jshint -W016 */ /* allows bitwise operators */
+
+/// <reference path="random.js" />
+/// <reference path="utilities.js" />
+/// <reference path="operations.js" />
+/// <reference path="jwk.js" />
+/// <reference path="aes.js" />
+
+/// <dictionary>
+///     Cbc,msrcrypto,res
+/// </dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoPadding = msrcryptoPadding || {};
 
@@ -5922,7 +6517,7 @@ var msrcryptoCbc = function (blockCipher) {
     var paddingScheme = msrcryptoPadding.pkcsv7(blockSize);
 
     // Merges an array of block arrays into a single byte array
-    var mergeBlocks = function ( tab) {
+    var mergeBlocks = function (/*@type(Array)*/tab) {
         var res = [], i, j;
         for (i = 0 ; i < tab.length; i += 1) {
             var block = tab[i];
@@ -6040,7 +6635,7 @@ var msrcryptoCbc = function (blockCipher) {
         },
 
         // Does a full decryption and returns the result
-        decrypt: function ( cipherBytes) {
+        decrypt: function (/*@type(Array)*/cipherBytes) {
             /// <summary>perform the decryption of the encrypted message</summary>
             /// <param name="encryptedBytes" type="Array">the plain text to encrypt</param>
             /// <returns type="Array">the encrypted message</returns>
@@ -6179,14 +6774,65 @@ if (typeof operations !== "undefined") {
     operations.register("encrypt", "aes-cbc", msrcryptoCbc.workerEncrypt);
     operations.register("decrypt", "aes-cbc", msrcryptoCbc.workerDecrypt);
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
-var msrcryptoGcm = function ( blockCipher) {
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoJwk */
+/* global operations */
+/* global msrcryptoUtilities */
+/* global msrcryptoBlockCipher */
+/* jshint -W016 */ /* allows bitwise operators */
+
+/// <reference path="random.js" />
+/// <reference path="utilities.js" />
+/// <reference path="operations.js" />
+/// <reference path="jwk.js" />
+/// <reference path="aes.js" />
+
+/// <dictionary>
+///     Gcm,gcrt,Gctr,ghash,icb,msrcrypto,Subkey,utils
+/// </dictionary>
+
+/// <disable>IncorrectNumberOfArguments</disable>
+
+/// #endregion JSCop/JsHint
+
+var msrcryptoGcm = function (/*@type(msrcryptoAes)*/ blockCipher) {
 
     var utils = msrcryptoUtilities;
 
-    var mBuffer = [], mIvBytes, mAdditionalBytes, mTagLength, mJ0, mJ0inc, mH = blockCipher.encrypt(utils.getVector(16)), mGHashState = utils.getVector(16), mGHashBuffer = [], mCipherText = [], mGctrCb, mBytesProcessed = 0;
+    var /*@type(Array)*/ mBuffer = [],
+        /*@type(Array)*/ mIvBytes,
+        /*@type(Array)*/ mAdditionalBytes,
+        /*@type(Number)*/ mTagLength,
+        /*@type(Array)*/ mJ0,
+        /*@type(Array)*/ mJ0inc,
+        /*@type(Array)*/ mH = blockCipher.encrypt(utils.getVector(16)),
+        /*@type(Array)*/ mGHashState = utils.getVector(16),
+        /*@type(Array)*/ mGHashBuffer = [],
+        /*@type(Array)*/ mCipherText = [],
+        /*@type(Array)*/ mGctrCb,
+        /*@type(Number)*/ mBytesProcessed = 0;
 
-    function ghash( hashSubkey, dataBytes) {
+    function ghash(/*@type(Array)*/hashSubkey, /*@type(Array)*/dataBytes) {
 
         var blockCount = Math.floor(dataBytes.length / 16),
             dataBlock;
@@ -6214,7 +6860,7 @@ var msrcryptoGcm = function ( blockCipher) {
 
     }
 
-    function blockMultiplication( blockX, blockY) {
+    function blockMultiplication(/*@type(Array)*/blockX, /*@type(Array)*/blockY) {
 
         var z = utils.getVector(16),
             v = blockY.slice(),
@@ -6239,7 +6885,7 @@ var msrcryptoGcm = function ( blockCipher) {
         return z;
     }
 
-    function shiftRight( dataBytes) {
+    function shiftRight(/*@type(Array)*/dataBytes) {
 
         for (var i = dataBytes.length - 1; i > 0; i--) {
             dataBytes[i] = ((dataBytes[i - 1] & 1) << 7) | (dataBytes[i] >>> 1);
@@ -6249,12 +6895,12 @@ var msrcryptoGcm = function ( blockCipher) {
         return dataBytes;
     }
 
-    function getBit( byteArray, bitNumber) {
+    function getBit(/*@type(Array)*/byteArray, bitNumber) {
         var byteIndex = Math.floor(bitNumber / 8);
         return (byteArray[byteIndex] >> (7 - (bitNumber % 8))) & 1;
     }
 
-    function inc( dataBytes) {
+    function inc(/*@type(Array)*/dataBytes) {
 
         var carry = 256;
         for (var i = 1; i <= 4; i++) {
@@ -6265,7 +6911,7 @@ var msrcryptoGcm = function ( blockCipher) {
         return dataBytes;
     }
 
-    function gctr( icb, dataBytes) {
+    function gctr(/*@type(Array)*/icb, /*@type(Array)*/dataBytes) {
 
         var blockCount = Math.ceil(dataBytes.length / 16),
             dataBlock,
@@ -6301,7 +6947,7 @@ var msrcryptoGcm = function ( blockCipher) {
         ];
     }
 
-    function padBlocks( dataBytes) {
+    function padBlocks(/*@type(Array)*/dataBytes) {
         var padLen = 16 * Math.ceil(mAdditionalBytes.length / 16) - mAdditionalBytes.length;
         return dataBytes.concat(utils.getVector(padLen));
     }
@@ -6315,7 +6961,7 @@ var msrcryptoGcm = function ( blockCipher) {
         mGctrCb = mIvBytes = mAdditionalBytes = null;
     }
 
-    function init( ivBytes, additionalBytes, tagLength) {
+    function init(/*@type(Array)*/ivBytes, /*@type(Array)*/additionalBytes, tagLength) {
 
         mAdditionalBytes = additionalBytes || [];
 
@@ -6346,7 +6992,7 @@ var msrcryptoGcm = function ( blockCipher) {
         ghash(mH, padBlocks(mAdditionalBytes));
     }
 
-    function encrypt( plainBytes) {
+    function encrypt(/*@type(Array)*/plainBytes) {
 
         mBytesProcessed = plainBytes.length;
 
@@ -6363,7 +7009,7 @@ var msrcryptoGcm = function ( blockCipher) {
         return c.slice().concat(t);
     }
 
-    function decrypt( cipherBytes, tagBytes) {
+    function decrypt(/*@type(Array)*/cipherBytes, /*@type(Array)*/tagBytes) {
 
         mBytesProcessed = cipherBytes.length;
 
@@ -6384,7 +7030,7 @@ var msrcryptoGcm = function ( blockCipher) {
         }
     }
 
-    function processEncrypt( plainBytes) {
+    function processEncrypt(/*@type(Array)*/plainBytes) {
 
         // Append incoming bytes to the end of the existing buffered bytes
         mBuffer = mBuffer.concat(plainBytes);
@@ -6407,7 +7053,7 @@ var msrcryptoGcm = function ( blockCipher) {
         ghash(mH, c);
     }
 
-    function processDecrypt( cipherBytes) {
+    function processDecrypt(/*@type(Array)*/cipherBytes) {
 
         // Append incoming bytes to the end of the existing buffered bytes
         mBuffer = mBuffer.concat(cipherBytes);
@@ -6495,7 +7141,7 @@ var gcm;
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoGcm.encrypt = function ( p) {
+    msrcryptoGcm.encrypt = function ( /*@dynamic*/ p) {
 
         var result;
 
@@ -6520,7 +7166,7 @@ if (typeof operations !== "undefined") {
         return result;
     };
 
-    msrcryptoGcm.decrypt = function ( p) {
+    msrcryptoGcm.decrypt = function ( /*@dynamic*/ p) {
 
         var result;
 
@@ -6549,7 +7195,7 @@ if (typeof operations !== "undefined") {
         return result;
     };
 
-    msrcryptoGcm.generateKey = function ( p) {
+    msrcryptoGcm.generateKey = function ( /*@dynamic*/ p) {
 
         if (p.algorithm.length % 8 !== 0) {
             throw new Error();
@@ -6567,9 +7213,9 @@ if (typeof operations !== "undefined") {
         };
     };
 
-    msrcryptoGcm.importKey = function ( p) {
+    msrcryptoGcm.importKey = function ( /*@dynamic*/ p) {
 
-        var keyObject = msrcryptoJwk.jwkToKey(p.keyData, p.algorithm, ["k"]);
+        var /*@dynamic*/ keyObject = msrcryptoJwk.jwkToKey(p.keyData, p.algorithm, ["k"]);
 
         return {
             type: "keyImport",
@@ -6583,7 +7229,7 @@ if (typeof operations !== "undefined") {
         };
     };
 
-    msrcryptoGcm.exportKey = function ( p) {
+    msrcryptoGcm.exportKey = function ( /*@dynamic*/ p) {
 
         var jsonKeyStringArray = msrcryptoJwk.keyToJwk(p.keyHandle, p.keyData);
 
@@ -6595,7 +7241,39 @@ if (typeof operations !== "undefined") {
     operations.register("generateKey", "aes-gcm", msrcryptoGcm.generateKey);
     operations.register("encrypt", "aes-gcm", msrcryptoGcm.encrypt);
     operations.register("decrypt", "aes-gcm", msrcryptoGcm.decrypt);
-} function MsrcryptoPrng() {
+}
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */
+
+/// <reference path="utilities.js" />
+/// <reference path="aes.js" />
+
+/// <dictionary>msrcrypto, utils, xor, res, csrc, nist, nistpubs, prng</dictionary>
+
+/// #endregion JSCop/JsHint
+
+/* @constructor */ function MsrcryptoPrng() {
     /// <summary>Pseudo Random Number Generator function/class.</summary>
     /// <remarks>This is the PRNG engine, not the entropy collector.
     /// The engine must be initialized with adequate entropy in order to generate cryptographically secure
@@ -6655,7 +7333,7 @@ if (typeof operations !== "undefined") {
         reseedCounter = 1;
     }
 
-    function reseed(entropy, additionalEntropy) {
+    function reseed(entropy,/*@optional*/ additionalEntropy) {
         /// <summary>Reseed the PRNG with additional entropy.</summary>
         /// <param name="entropy" type="Array">Input entropy.</param>
         /// <param name="additionalEntropy" type="Array">Optional additional entropy input.</param>
@@ -6691,7 +7369,7 @@ if (typeof operations !== "undefined") {
         v = temp.slice(keyLen);
     }
 
-    function generate(requestedBytes, additionalInput) {
+    function generate(requestedBytes,/*@optional*/ additionalInput) {
         /// <summary>Generate pseudo-random bits, and update the internal PRNG state.</summary>
         /// <param name="requestedBytes" type="Number">Number of pseudorandom bytes to be returned.</param>
         /// <param name="additionalInput" type="Array">Application-provided additional input array (optional).</param>
@@ -6730,7 +7408,7 @@ if (typeof operations !== "undefined") {
         /// <param name="entropy" type="Array">Input entropy.</param>
         /// <param name="additionalEntropy" type="Array">Optional additional entropy input.</param>
 
-        init: function (entropy, personalization) {
+        init: function (entropy,/*@optional*/ personalization) {
             /// <summary>Initialize the PRNG by seeing with entropy and optional input data.</summary>
             /// <param name="entropy" type="Array">Input entropy.</param>
             /// <param name="personalization" type="Array">Optional input.</param>
@@ -6741,11 +7419,11 @@ if (typeof operations !== "undefined") {
             reseed(entropy, personalization);
             initialized = true;
         },
-        getBytes: function (length, additionalInput) {
+        getBytes: function (length, /*@optional*/ additionalInput) {
             if (!initialized) {
                 throw new Error("can't get randomness before initialization");
             }
-            return generate(length, additionalInput);
+            return generate(length, /*@optional*/ additionalInput);
         },
         getNonZeroBytes: function (length, additionalInput) {
             if (!initialized) {
@@ -6768,7 +7446,45 @@ if (typeof operations !== "undefined") {
 // This is the PRNG object per instantiation, including one per worker.
 // The instance in the main thread is used to seed the instances in workers.
 // TODO: Consider combining the entropy pool in the main thread with the PRNG instance in the main thread.
+/// <disable>JS3085.VariableDeclaredMultipleTimes</disable>
 var msrcryptoPseudoRandom = new MsrcryptoPrng();
+/// <enable>JS3085.VariableDeclaredMultipleTimes</enable>
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+/* global arrayHelper */
+/* global MsrcryptoPrng */
+
+/* jshint -W016 */
+
+/// <reference path="random.js" />
+/// <reference path="utilities.js" />
+/// <reference path="arrayHelper.js" />
+/// <reference path="jsCopDefs.js" />
+
+/// <dictionary>arr,msrcrypto,Prng,req,res,mozilla,polyfill,PRNGs,redirectlocale,redirectslug</dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 function MsrcryptoEntropy() {
     /// <summary>Opportunistic entropy collector.</summary>
@@ -6808,7 +7524,7 @@ function MsrcryptoEntropy() {
             if (window.Uint8Array) {
                 var res = new window.Uint8Array(poolLength);
                 prngCrypto.getRandomValues(res);
-                pool = pool.concat(Array.apply(null, res));
+                pool = pool.concat(Array.apply(null, /*@static_cast(Array)*/res));
                 cryptographicPRNGPresent = true;
             }
         }
@@ -6952,6 +7668,39 @@ function MsrcryptoEntropy() {
         }
     };
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global cryptoMath */
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */
+
+/// <reference path="utilities.js " />
+/// <reference path="cryptoMath.js " />
+
+/// <dictionary>mgf,rsa,Struct,utils</dictionary>
+
+/// <disable>DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoRsaBase = function (keyStruct) {
 
@@ -6970,7 +7719,7 @@ var msrcryptoRsaBase = function (keyStruct) {
         return bytes;
     }
 
-    function modExp( dataBytes, expBytes, modulusBytes) {
+    function /*@type(Bytes)*/ modExp(/*@type(Bytes)*/ dataBytes, /*@type(Bytes)*/ expBytes,/*@type(Bytes)*/  modulusBytes) {
         /// <returns type="Array">Result in a digit array.</returns>
         var exponent = cryptoMath.bytesToDigits(expBytes);
 
@@ -7089,8 +7838,45 @@ var rsaShared = {
     }
 
 };
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoUtilities */
+/* global rsaShared */
+
+/* jshint -W016 */
+
+/// <reference path="utilities.js " />
+/// <reference path="random.js " />
+/// <reference path="rsa-base.js " />
+
+/// <dictionary>Struct,unpad,Hashp,maskeddb,rsa,utils</dictionary>
+
+/// <disable>DeclareVariablesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
+
+/// <disable>JS3085.VariableDeclaredMultipleTimes</disable>
 var rsaMode = rsaMode || {};
+/// <enable>JS3085.VariableDeclaredMultipleTimes</enable>
 
 rsaMode.oaep = function (keyStruct, hashFunction) {
 
@@ -7102,11 +7888,11 @@ rsaMode.oaep = function (keyStruct, hashFunction) {
         throw new Error("must supply hashFunction");
     }
 
-    function pad( message, label) {
+    function pad(/*@type(Array)*/ message, /*@optional*/ label) {
 
         var lHash, psLen, psArray, i, db, seed;
         var dbMask, maskeddb, seedMask, maskedSeed;
-        var encodedMessage;
+        var /*@type(Array)*/ encodedMessage;
 
         if (message.length > (size - 2 * (hashFunction.hashLen / 8) - 2)) {
             throw new Error("Message too long.");
@@ -7114,7 +7900,7 @@ rsaMode.oaep = function (keyStruct, hashFunction) {
 
         label || (label = []);
 
-        lHash = hashFunction.computeHash( label);
+        lHash = hashFunction.computeHash(/*@static_cast(Digits)*/label);
 
         psLen = size - message.length - (2 * lHash.length) - 2;
         psArray = utils.getVector(psLen);
@@ -7139,7 +7925,7 @@ rsaMode.oaep = function (keyStruct, hashFunction) {
         return encodedMessage;
     }
 
-    function unpad( encodedBytes, labelBytes) {
+    function unpad(/*@type(Array)*/ encodedBytes, /*@optional*/ labelBytes) {
 
         var lHash, maskedSeed, maskeddb, seedMask;
         var seed, dbMask, db;
@@ -7181,16 +7967,50 @@ rsaMode.oaep = function (keyStruct, hashFunction) {
 
     return {
 
-        pad: function ( messageBytes, labelBytes) {
+        pad: function (/*@type(Array)*/ messageBytes, /*@optional*/ labelBytes) {
             return pad(messageBytes, labelBytes);
         },
 
-        unpad: function ( encodedBytes, labelBytes) {
+        unpad: function (/*@type(Array)*/ encodedBytes, /*@optional*/ labelBytes) {
             return unpad(encodedBytes, labelBytes);
         }
     };
 
 };
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */
+
+/// <reference path="utilities.js " />
+/// <reference path="random.js " />
+
+/// <dictionary>emp,emsa,pkcs,rsa,Struct,tlen,unpad,utils</dictionary>
+
+/// <disable></disable>
+
+/// #endregion JSCop/JsHint
 
 var rsaMode = rsaMode || {};
 
@@ -7280,36 +8100,73 @@ rsaMode.pkcs1Sign = function (keyStruct, hashFunction) {
     };
 };
 
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoUtilities */
+/* global rsaShared */
+
+/* jshint -W016 */
+
+/// <dictionary>emsa,rsa,Struct,utils,octect</dictionary>
+
+/// <disable>DeclareVariablesBeforeUse, DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
+
+/// <disable>JS3085.VariableDeclaredMultipleTimes</disable>
 var rsaMode = rsaMode || {};
+/// <enable>JS3085.VariableDeclaredMultipleTimes</enable>
 
 rsaMode.pss = function (keyStruct, hashFunction) {
 
     var utils = msrcryptoUtilities,
         random = msrcryptoPseudoRandom;
 
-    function emsa_pss_encode(messageBytes, saltLength, salt) {
+    function emsa_pss_encode(messageBytes, /*@optional*/ saltLength, /*@optional*/ salt) {
 
         var emBits = (keyStruct.n.length * 8) - 1,
-            emLen = Math.ceil(emBits / 8), mHash = hashFunction.computeHash(messageBytes);
+            emLen = Math.ceil(emBits / 8),
+            /*@type(Array)*/ mHash = hashFunction.computeHash(messageBytes);
 
         saltLength = salt ? salt.length : saltLength || mHash.length;
 
         if (emLen < (mHash.length + saltLength + 2)) {
             throw new Error("encoding error");
-        } salt = salt || random.getBytes(saltLength);
+        }
+
+        /*@type(Array)*/ salt = salt || random.getBytes(saltLength);
 
         // M' = (0x) 00 00 00 00 00 00 00 00 || mHash || salt
         var mp = [0, 0, 0, 0, 0, 0, 0, 0].concat(mHash, salt);
 
-        var h = hashFunction.computeHash(mp);
+        var /*@type(Array)*/ h = hashFunction.computeHash(mp);
 
-        var ps = utils.getVector(emLen - salt.length - h.length - 2);
+        var /*@type(Array)*/ ps = utils.getVector(emLen - salt.length - h.length - 2);
 
-        var db = ps.concat([1], salt);
+        var /*@type(Array)*/ db = ps.concat([1], salt);
 
-        var dbMask = rsaShared.mgf1(h, emLen - h.length - 1, hashFunction);
+        var /*@type(Array)*/ dbMask = rsaShared.mgf1(h, emLen - h.length - 1, hashFunction);
 
-        var maskedDb = utils.xorVectors(db, dbMask);
+        var /*@type(Array)*/ maskedDb = utils.xorVectors(db, dbMask);
 
         // Set the ((8 * emLen) - emBits) of the leftmost octect in maskedDB to zero
         var mask = 0;
@@ -7323,7 +8180,7 @@ rsaMode.pss = function (keyStruct, hashFunction) {
         return em;
     }
 
-    function emsa_pss_verify( signatureBytes, messageBytes, saltLength) {
+    function emsa_pss_verify( /*@type(Array)*/ signatureBytes,/*@type(Array)*/ messageBytes, /*@optional*/ saltLength) {
 
         var emBits = (keyStruct.n.length * 8) - 1;
 
@@ -7345,7 +8202,7 @@ rsaMode.pss = function (keyStruct, hashFunction) {
 
         var dbMask = rsaShared.mgf1(h, emLen - hLen - 1, hashFunction);
 
-        var db = utils.xorVectors(maskedDb, dbMask);
+        var /*@type(Array)*/ db = utils.xorVectors(maskedDb, dbMask);
 
         // Set the leftmost 8 * emLen - emBits of db[0] to zero
         db[0] &= 0xFF >>> (8 - ((8 * emLen) - emBits));
@@ -7373,17 +8230,52 @@ rsaMode.pss = function (keyStruct, hashFunction) {
 
     return {
 
-        sign: function (messageBytes, saltLength, salt) {
+        sign: function (messageBytes, /*@optional*/ saltLength, /*@optional*/ salt) {
             return emsa_pss_encode(messageBytes, saltLength, salt);
         },
 
-        verify: function (signatureBytes, messageBytes, saltLength) {
+        verify: function (signatureBytes, messageBytes, /*@optional*/ saltLength) {
             return emsa_pss_verify(signatureBytes, messageBytes, saltLength);
         }
     };
 };
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
-var msrcryptoRsa = function (keyStruct, mode, hashFunction) {
+/// #region JSCop/JsHint
+
+/* global msrcryptoRsaBase */
+/* global rsaMode */
+/* global operations */
+/* global msrcryptoJwk */
+/* global msrcryptoSha256 */
+/* global msrcryptoSha512 */
+/* global msrcryptoSha1 */
+
+/* jshint -W016 */
+
+/// <dictionary>Func,msrcrypto,Obj,Rsa,Struct,unpad</dictionary>
+
+/// <disable>DeclareVariablesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
+
+var msrcryptoRsa = function (keyStruct, mode, /*@optional*/ hashFunction) {
 
     var rsaBase = msrcryptoRsaBase(keyStruct);
 
@@ -7441,28 +8333,34 @@ var msrcryptoRsa = function (keyStruct, mode, hashFunction) {
 
     var returnObj = {
 
-        encrypt: function ( dataBytes, labelBytes) {
+        encrypt: function (/*@type(Array)*/ dataBytes, /*@optional*/ labelBytes) {
 
             var paddedData;
 
             if (paddingFunction !== null) {
                 // OAEP padding can take two arguments
+                ///<disable>JS3053.IncorrectNumberOfArguments</disable>
                 paddedData = paddingFunction(dataBytes, labelBytes);
+                ///<enable>JS3053.IncorrectNumberOfArguments</enable>
             } else {
                 // Slice() has optional arguments
+                ///<disable>JS3053.IncorrectNumberOfArguments</disable>
                 paddedData = dataBytes.slice();
+                ///<enable>JS3053.IncorrectNumberOfArguments</enable>
             }
 
             return rsaBase.encrypt(paddedData);
         },
 
-        decrypt: function ( cipherBytes, labelBytes) {
+        decrypt: function (/*@type(Array)*/ cipherBytes, /*@optional*/ labelBytes) {
 
-            var decryptedData = rsaBase.decrypt(cipherBytes);
+            var /*@type(Array)*/ decryptedData = rsaBase.decrypt(cipherBytes);
 
             if (unPaddingFunction !== null) {
                 // OAEP padding can take two arguments
+                ///<disable>JS3053.IncorrectNumberOfArguments</disable>
                 decryptedData = unPaddingFunction(decryptedData, labelBytes);
+                ///<enable>JS3053.IncorrectNumberOfArguments</enable>
             } else {
                 decryptedData = decryptedData.slice(0);
             }
@@ -7470,12 +8368,12 @@ var msrcryptoRsa = function (keyStruct, mode, hashFunction) {
             return decryptedData;
         },
 
-        signData: function ( messageBytes, saltLength, salt) {
+        signData: function (/*@type(Array)*/ messageBytes, /*@optional*/ saltLength, /*@optional*/ salt) {
 
             return rsaBase.decrypt(paddingFunction(messageBytes, saltLength, salt));
         },
 
-        verifySignature: function ( signature, messageBytes, saltLength) {
+        verifySignature: function (/*@type(Array)*/ signature, /*@type(Array)*/ messageBytes, /*@optional*/ saltLength) {
 
             var decryptedSig = rsaBase.encrypt(signature);
 
@@ -7490,7 +8388,7 @@ var msrcryptoRsa = function (keyStruct, mode, hashFunction) {
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoRsa.sign = function ( p) {
+    msrcryptoRsa.sign = function ( /*@dynamic*/ p) {
 
         var rsaObj,
             hashName = p.algorithm.hash.name,
@@ -7503,7 +8401,7 @@ if (typeof operations !== "undefined") {
         return rsaObj.signData(p.buffer, saltLength, salt);
     };
 
-    msrcryptoRsa.verify = function ( p) {
+    msrcryptoRsa.verify = function ( /*@dynamic*/ p) {
 
         var hashName = p.algorithm.hash.name,
             hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],            
@@ -7515,7 +8413,7 @@ if (typeof operations !== "undefined") {
         return rsaObj.verifySignature(p.signature, p.buffer, saltLength);
     };
 
-    msrcryptoRsa.workerEncrypt = function ( p) {
+    msrcryptoRsa.workerEncrypt = function ( /*@dynamic*/ p) {
 
         var result,
             rsaObj,
@@ -7546,7 +8444,7 @@ if (typeof operations !== "undefined") {
         return result;
     };
 
-    msrcryptoRsa.workerDecrypt = function ( p) {
+    msrcryptoRsa.workerDecrypt = function ( /*@dynamic*/ p) {
 
         var result,
             rsaObj,
@@ -7576,7 +8474,7 @@ if (typeof operations !== "undefined") {
         return result;
     };
 
-    msrcryptoRsa.importKey = function ( p) {
+    msrcryptoRsa.importKey = function ( /*@dynamic*/ p) {
 
         var keyObject = msrcryptoJwk.jwkToKey(p.keyData, p.algorithm, ["n", "e", "d", "q", "p", "dq", "dp", "qi"]);
 
@@ -7592,7 +8490,7 @@ if (typeof operations !== "undefined") {
         };
     };
 
-    msrcryptoRsa.exportKey = function ( p) {
+    msrcryptoRsa.exportKey = function ( /*@dynamic*/ p) {
 
         var jsonKeyStringArray = msrcryptoJwk.keyToJwk(p.keyHandle, p.keyData);
 
@@ -7622,6 +8520,43 @@ if (typeof operations !== "undefined") {
     operations.register("exportKey", "rsa-pss", msrcryptoRsa.exportKey);
 
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* global msrcryptoUtilities */
+/* global msrcryptoSha256 */
+/* global msrcryptoSha512 */
+/* global msrcryptoSha1 */
+
+/* jshint -W016 */
+
+/// <reference path="utilities.js " />
+/// <reference path="sha256.js " />
+/// <reference path="sha512.js " />
+
+/// <dictionary>alg,Func,Kdf,msrcrypto,utils</dictionary>
+
+/// <disable>DeclareVariablesBeforeUse,DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 /// The "concat" key derivation function from NIST SP-800-56A.
 var msrcryptoKdf = function (hashFunction) {
@@ -7664,7 +8599,7 @@ var msrcryptoKdfInstance = null;
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoKdf.deriveKey = function ( p) {
+    msrcryptoKdf.deriveKey = function (/*@dynamic*/p) {
 
         var utils = msrcryptoUtilities;
 
@@ -7701,7 +8636,7 @@ if (typeof operations !== "undefined") {
 
     };
 
-    msrcryptoKdf.deriveBits = function ( p) {
+    msrcryptoKdf.deriveBits = function (/*@dynamic*/p) {
 
         var hashName = p.algorithm.hash.name;
 
@@ -7731,6 +8666,37 @@ if (typeof operations !== "undefined") {
     operations.register("deriveBits", "concat", msrcryptoKdf.deriveBits);
 
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* global cryptoMath */
+/* global cryptoECC */
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoJwk */
+
+/// <dictionary>btd,dtb,Ecdh,ecop,msrcrypto</dictionary>
+
+/// <disable>DeclareVariablesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoEcdh = function (curve) {
 
@@ -7781,14 +8747,6 @@ var msrcryptoEcdh = function (curve) {
 
         var publicPoint = new cryptoECC.EllipticCurvePointFp(
             e, false, btd(publicKey.x), btd(publicKey.y), null, false);
-
-        if (!publicPoint.isInMontgomeryForm) {
-            ecop.convertToMontgomeryForm(publicPoint);
-        }
-
-        if (!publicPoint.isAffine) {
-            ecop.convertToAffineForm(publicPoint);
-        }
 
         var sharedSecretPoint = e.allocatePointStorage();
         ecop.convertToJacobianForm(sharedSecretPoint);
@@ -7928,6 +8886,47 @@ if (typeof operations !== "undefined") {
     operations.register("generateKey", "ecdh", msrcryptoEcdh.generateKey);
     operations.register("deriveBits", "ecdh", msrcryptoEcdh.deriveBits);
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/// <reference path="utilities.js" />
+/// <reference path="cryptoMath.js" />
+/// <reference path="cryptoECC.js" />
+/// <reference path="sha256.js" />
+/// <reference path="sha512.js" />
+
+/* global operations */
+/* global msrcryptoHashFunctions */
+/* global cryptoMath */
+/* global cryptoECC */
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoJwk */
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */
+
+/// <dictionary>btd,dtb,Ecdsa,ecop,msrcrypto</dictionary>
+
+/// <disable>DeclareVariablesBeforeUse,DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoEcdsa = function (curve) {
 
@@ -7989,7 +8988,7 @@ var msrcryptoEcdsa = function (curve) {
         return digest;
     }
 
-    function sign(privateKey, messageBytes, ephemeralKey) {
+    function sign(privateKey, messageBytes, /*@optional*/ ephemeralKey) {
 
         if (!ephemeralKey) {
             ephemeralKey = generateKey();
@@ -8010,7 +9009,10 @@ var msrcryptoEcdsa = function (curve) {
         cryptoMath.modInv(k, curve.order, tmp);
         cryptoMath.modMul(s, tmp, curve.order, s);
 
-        signature = dtb(r, true, orderByteLength).concat(dtb(s, true, orderByteLength));
+        // ensure the bytes arrays are of the expected size
+        var rBytes = msrcryptoUtilities.padFront(dtb(r, true, orderByteLength), 0, orderByteLength);
+        var sBytes = msrcryptoUtilities.padFront(dtb(s, true, orderByteLength), 0, orderByteLength);
+        signature = rBytes.concat(sBytes);
 
         return signature;
     }
@@ -8076,7 +9078,7 @@ var msrcryptoEcdsa = function (curve) {
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoEcdsa.sign = function ( p) {
+    msrcryptoEcdsa.sign = function ( /*@dynamic*/ p) {
 
         var hashName = p.algorithm.hash.name,
             curve = cryptoECC.createCurve(p.algorithm.namedCurve.toUpperCase()),
@@ -8088,7 +9090,7 @@ if (typeof operations !== "undefined") {
         return ecdsa.sign(p.keyData, digest);
     };
 
-    msrcryptoEcdsa.verify = function ( p) {
+    msrcryptoEcdsa.verify = function ( /*@dynamic*/ p) {
 
         var hashName = p.algorithm.hash.name,
             curve = cryptoECC.createCurve(p.algorithm.namedCurve.toUpperCase()),
@@ -8200,6 +9202,57 @@ if (typeof operations !== "undefined") {
     operations.register("exportKey", "ecdsa", msrcryptoEcdsa.exportKey);
 
 }
+///#source 1 1 /scripts/subtle/head.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+/* global arrayHelper */
+/* global asyncMode: true */
+/* global createProperty */
+/* global defined */
+/* global msrcryptoUtilities */
+/* global msrcryptoWorker */
+/* global msrcryptoPseudoRandom */
+/* global fprngEntropyProvided: true */
+/* global runningInWorkerInstance */
+/* global scriptUrl */
+/* global setterSupport */
+/* global webWorkerSupport */
+/* global operations */
+/* jshint -W098 */
+/* W098 is 'defined but not used'. We have not-yet-implemented apis stubbed out. */
+
+/// <reference path="jsCopDefs.js" />
+/// <reference path="global.js" />
+/// <reference path="worker.js" />
+/// <reference path="utilities.js" />
+
+/// These are terms that JSCop thinks are misspelled, so we have to add them to its dictionary
+/// <dictionary>
+///    concat, msrcrypto, onabort, oncomplete, onerror, onmessage, onprogress, Params, prng,
+///    syncWorker, webworker, webworkers, obj
+/// </dictionary>
+
+//  JSCop cannot figure out the types correctly
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoSubtle;
 
@@ -8207,8 +9260,26 @@ var msrcryptoSubtle;
 if (!runningInWorkerInstance) {
 
     msrcryptoSubtle = (function() {
+///#source 1 1 /scripts/subtle/promises.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
-// Add Promises if not supported
+// If no native Promise support add ours
 if (!window.Promise) {
 
     window.Promise = function (executor, id) {
@@ -8476,6 +9547,24 @@ if (!window.Promise) {
 
     //#endregion static methods
 }
+///#source 1 1 /scripts/subtle/syncWorker.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 // This worker is used when webworkers aren't available.
 // It will function synchronously but use the same
@@ -8495,7 +9584,7 @@ function syncWorker() {
         // When using a sync worker, we'll have to catch thrown errors, so we
         // need a try/catch block here.
         try {
-            result = msrcryptoWorker.jsCryptoRunner( { data: data });
+            result = msrcryptoWorker.jsCryptoRunner(/*@static_cast(typeEvent)*/{ data: data });
         } catch (ex) {
             this.onerror({ data: ex.description, type: "error" });
             return;
@@ -8518,6 +9607,24 @@ function syncWorker() {
         }
     };
 }
+///#source 1 1 /scripts/subtle/operations.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 /// <dictionary>Obj,oncomplete,onerror</dictionary>
 
@@ -8538,8 +9645,9 @@ function baseOperation(processResults) {
             rejectFunc = reject;
         });
 
+
     // Called when the worker returns a result
-    function opDispatchEvent( e) {
+    function opDispatchEvent(/*@type(Event)*/e) {
 
         // If the event is an Error call the onError callback
         if (e.type === "error") {
@@ -8662,6 +9770,25 @@ function toArrayBufferIfSupported(dataArray) {
     return dataArray;
 }
 
+///#source 1 1 /scripts/subtle/keyManager.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
+
 // Storage for the keyData.
 // Stored as {keyHandle: keyHandle, keyData: keyData} objects.
 var keys = [];
@@ -8684,6 +9811,24 @@ keys.lookup = function (keyHandle) {
     }
     return null;
 };
+///#source 1 1 /scripts/subtle/workerManager.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 // Manages the pool of webworkers and job queue.
 // We first try to find an idle webworker and pass it a crypto job.
@@ -8826,7 +9971,7 @@ var workerManager = (function () {
         worker.busy = false;
 
         // The worker will call this function when it completes its job.
-        worker.onmessage = function ( e) {
+        worker.onmessage = function (/*@type(typeEvent)*/ e) {
 
             var op = worker.operation;
 
@@ -8849,7 +9994,7 @@ var workerManager = (function () {
         };
 
         // If an error occurs within the worker.
-        worker.onerror = function ( e) {
+        worker.onerror = function (/*@type(typeEvent)*/ e) {
 
             var op = worker.operation;
 
@@ -8875,7 +10020,7 @@ var workerManager = (function () {
     }
 
     // Creates or reuses a worker and starts it up on work.
-    function runJob( operation, data) {
+    function runJob(/*@dynamic*/ operation, data) {
 
         var worker = null;
 
@@ -8883,6 +10028,7 @@ var workerManager = (function () {
         // Then run in synchronous mode even if webworkers are available.
         // This can be turned on or off on the fly.
         asyncMode = webWorkerSupport && !(publicMethods.forceSync);
+
 
         // Get the first idle worker.
         worker = getFreeWorker();
@@ -8960,6 +10106,24 @@ var workerManager = (function () {
     };
 
 })();
+///#source 1 1 /scripts/subtle/subtleInterface.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 var utils = msrcryptoUtilities;
 
@@ -9293,6 +10457,7 @@ var publicMethods = {
         ///     <returns type="KeyOperation" />
         /// </signature>
 
+
         return executeOperation("importKey", arguments, 1);
     },
 
@@ -9351,12 +10516,54 @@ var publicMethods = {
     }
 
 };
+///#source 1 1 /scripts/subtle/tail.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 return publicMethods;
 
 })();
 
 }
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoWrapKey = (function () {
 
@@ -9469,6 +10676,7 @@ var msrcryptoWrapKey = (function () {
         }
     }
 
+
     return {
         wrapKey: wrapKey,
         unwrapKey: unwrapKey
@@ -9477,10 +10685,28 @@ var msrcryptoWrapKey = (function () {
 
 })();
 
+
 if (typeof operations !== "undefined") {
     operations.register("wrapKey", "aes-gcm", msrcryptoWrapKey.wrapKey);
     operations.register("unwrapKey", "aes-cbc", msrcryptoWrapKey.unwrapKey);
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
 var publicMethods = {
 
@@ -9584,4 +10810,3 @@ if (!runningInWorkerInstance) {
 return publicMethods;
 
 })();
-

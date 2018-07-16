@@ -1,7 +1,7 @@
 ﻿///#source 1 1 /scripts/subtle/head.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -59,7 +59,7 @@ if (!runningInWorkerInstance) {
 ///#source 1 1 /scripts/subtle/promises.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -346,7 +346,7 @@ if (!window.Promise) {
 ///#source 1 1 /scripts/subtle/syncWorker.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -406,7 +406,7 @@ function syncWorker() {
 ///#source 1 1 /scripts/subtle/operations.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -569,7 +569,7 @@ function toArrayBufferIfSupported(dataArray) {
 ///#source 1 1 /scripts/subtle/keyManager.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -610,7 +610,7 @@ keys.lookup = function (keyHandle) {
 ///#source 1 1 /scripts/subtle/workerManager.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -905,7 +905,7 @@ var workerManager = (function () {
 ///#source 1 1 /scripts/subtle/subtleInterface.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
@@ -1315,7 +1315,7 @@ var publicMethods = {
 ///#source 1 1 /scripts/subtle/tail.js
 //*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.

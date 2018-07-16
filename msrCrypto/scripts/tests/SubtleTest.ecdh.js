@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -147,7 +147,7 @@ asyncTest("ECDH/KDF Test", function () {
 
 asyncTest("ECDH deriveBits NUMSP256D1", function () {
 
-    var algorithm = { name: "Ecdh", namedCurve: "NuMSP256D1" };
+    var algorithm = { name: "Ecdh", namedCurve: "NUMSP256D1" };
 
     var keyPairA, keyPairB;
 
@@ -174,7 +174,7 @@ asyncTest("ECDH deriveBits NUMSP256D1", function () {
 
     function deriveSecret() {
 
-        var deriveBitsAlg = { name: "Ecdh", namedCurve: "NUMSp256D1", public: keyPairB.publicKey };
+        var deriveBitsAlg = { name: "Ecdh", namedCurve: "NUMSP256D1", public: keyPairB.publicKey };
 
         subtle.deriveBits(deriveBitsAlg, keyPairA.privateKey).then(
 
@@ -205,7 +205,7 @@ asyncTest("ECDH deriveBits NUMSP256D1", function () {
 
 asyncTest("ECDH deriveBits NUMSP256T1", function () {
 
-    var algorithm = { name: "Ecdh", namedCurve: "NUMSP256t1" };
+    var algorithm = { name: "Ecdh", namedCurve: "NUMSP256T1" };
 
     var keyPairA, keyPairB;
 
@@ -232,7 +232,7 @@ asyncTest("ECDH deriveBits NUMSP256T1", function () {
 
     function deriveSecret() {
 
-        var deriveBitsAlg = { name: "Ecdh", namedCurve: "NUmSP256t1", public: keyPairB.publicKey };
+        var deriveBitsAlg = { name: "Ecdh", namedCurve: "NUMSP256T1", public: keyPairB.publicKey };
 
         subtle.deriveBits(deriveBitsAlg, keyPairA.privateKey).then(
 
