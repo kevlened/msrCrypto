@@ -1,4 +1,7 @@
-﻿Included Scripts:
+﻿This library has been modified from the original.
+A list of changes is available in [the CHANGES file](https://github.com/kevlened/msrCrypto/blob/master/CHANGES).
+
+Included Scripts:
 
 	msrcrypto.js 		: Full library
 	msrcrypto.min.js	: Full library in minified form
