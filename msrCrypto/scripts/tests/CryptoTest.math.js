@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -320,6 +320,26 @@ test("testRightShift", function () {
         expected = Math.floor(expected / 2);
         cryptoMath.shiftRight(digits, digits);
     }
+});
+
+/**
+ * Test modInv padding
+ */
+test("testModInvNormalization", function () {
+    // Some code expects modInv to return an array of the same length as the modulus;
+    // this tests the modInv padding option to make sure this happens when used.
+    // The modulus n is a prime above 2^128 and the input i is such that i^-1 mod n,
+    // giving a result below 2^64 (with leading 0 that would be removed).
+    var expected = cryptoMath.bytesToDigits([0x3B, 0xC5, 0xBD, 0x2D, 0x8F, 0x1F, 0x09, 0x07]);
+    var n = cryptoMath.bytesToDigits([0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x33]);
+    var i = cryptoMath.bytesToDigits([0x74, 0x7F, 0x52, 0x6A, 0x09, 0x66, 0x18, 0xBF, 0x27, 0xF9, 0xF7, 0xCC, 0x6F, 0x52, 0x57, 0xB4]);
+    var actual = [];
+    cryptoMath.modInv(i, n, actual, false);
+    ok(cryptoMath.compareDigits(actual, expected) === 0, "wrong inverse value");
+    ok(actual.length === expected.length, "wrong inverse length (unpadded)");
+    cryptoMath.modInv(i, n, actual, true);
+    ok(cryptoMath.compareDigits(actual, expected) === 0, "wrong inverse value");
+    ok(actual.length > expected.length, "wrong inverse length (padded)");
 });
 
 module("integerGroupTests");

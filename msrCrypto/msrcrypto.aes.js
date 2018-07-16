@@ -1,6 +1,6 @@
 //*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -15,12 +15,31 @@
 //    limitations under the License.
 //
 //*******************************************************************************
-﻿
 
-var msrCryptoVersion = "1.4";
+/* jshint -W016 */ /* repress binary operator errors */
+/* jshint -W052 */ /* repress complaint about binary NOT operator*/
+var msrCryptoVersion = "1.4.1";
 var msrCrypto = msrCrypto || (function () {
 
+
     "use strict";
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
 var operations = {};
 
@@ -45,10 +64,44 @@ operations.exists = function (operationType, algorithmName) {
 
     return (operations[operationType][algorithmName]) ? true : false;
 };
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global self */
+/* jshint -W098 */
+/* W098 is 'defined but not used'. These properties are used in other scripts. */
+
+/// <reference path="jsCopDefs.js" />
+
+// Sets the url to for this script.
+// We need this to pass to webWorkers later to instantiate them.
+
+/// <dictionary>fprng</dictionary>
+
+/// #endregion JSCop/JsHint
 
 /// Store the URL for this script. We will need this later to instantiate
 /// new web workers (if supported).
 var scriptUrl = (function () {
+
+    /* jshint -W117 */
 
     if (typeof document !== "undefined") {
         // Use error.stack to find out the name of this script
@@ -68,6 +121,8 @@ var scriptUrl = (function () {
 
     // We must be running in an environment without document or self.
     return null;
+
+    /* jshint +W117 */
 
 })();
 
@@ -98,7 +153,7 @@ var setterSupport = (function () {
 //  this can be changes 'on the fly'.
 var asyncMode = webWorkerSupport;
 
-var createProperty = function (parentObject, propertyName, initialValue, getterFunction, setterFunction) {
+var createProperty = function (parentObject, propertyName, /*@dynamic*/initialValue, getterFunction, setterFunction) {
     /// <param name="parentObject" type="Object"/>
     /// <param name="propertyName" type="String"/>
     /// <param name="initialValue" type="Object"/>
@@ -121,8 +176,38 @@ var createProperty = function (parentObject, propertyName, initialValue, getterF
 };
 
 // Collection of hash functions for global availability.
-// Each hash function will add itself to the collection as it is evaluated.
+// Each hashfunction will add itself to the collection as it is evaluated.
 var msrcryptoHashFunctions = {};
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* jshint -W016 */
+
+/// <reference path="global.js" />
+/// <reference path="jsCopDefs.js" />
+
+/// <dictionary>
+///    msrcrypto, Btoa, uint, hexval, res, xor
+/// </dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoUtilities = (function () {
 
@@ -627,6 +712,41 @@ var msrcryptoUtilities = (function () {
     };
 
 })();
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global fprngEntropyProvided: true */
+/* global runningInWorkerInstance */
+/* global self */
+/* global operations */
+
+/// <reference path="jsCopDefs.js" />
+/// <reference path="global.js" />
+/// <reference path="random.js" />
+
+/// <dictionary>
+///    msrcrypto, webworker, func, onmessage, prng
+/// </dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoWorker = (function () {
 
@@ -641,7 +761,7 @@ var msrcryptoWorker = (function () {
 
     return {
 
-        jsCryptoRunner: function ( e) {
+        jsCryptoRunner: function (/*@type(typeEvent)*/ e) {
 
             var operation = e.data.operationType;
             var result;
@@ -652,7 +772,7 @@ var msrcryptoWorker = (function () {
 
             var func = operations[operation][e.data.algorithm.name];
 
-            var p = e.data;
+            var /*@dynamic*/ p = e.data;
 
             if (p.operationSubType === "process") {
                 func(p);
@@ -673,7 +793,7 @@ var msrcryptoWorker = (function () {
 //   we don't want to override self.onmessage.
 if (runningInWorkerInstance) {
 
-    self.onmessage = function ( e) {
+    self.onmessage = function (/*@type(typeEvent)*/e) {
 
         // When this worker first gets instantiated we will receive seed data
         //   for this workers prng.
@@ -687,6 +807,35 @@ if (runningInWorkerInstance) {
         msrcryptoWorker.jsCryptoRunner(e);
     };
 }
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+
+/// <reference path="utilities.js" />
+
+/// <dictionary>alg,Jwk,msrcrypto,utils</dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoJwk = (function () {
 
@@ -824,6 +973,7 @@ var msrcryptoJwk = (function () {
     // 'jwkKeyData' is an array of bytes. Each byte is a charCode for a json key string
     function jwkToKey(keyData, algorithm, propsToArray) {
 
+
         // Convert the json string to an object
         var jsonKeyObject = JSON.parse(JSON.stringify(keyData)); //JSON.parse(jsonString);
 
@@ -845,6 +995,38 @@ var msrcryptoJwk = (function () {
         jwkToKey: jwkToKey
     };
 })();
+/// #region JSCop/JsHint
+
+/// <disable>
+/// JS2025.InsertSpaceBeforeCommentText,
+/// JS2027.PunctuateCommentsCorrectly,
+/// JS2074.IdentifierNameIsMisspelled,
+/// JS3056.DeclareVariablesOnceOnly,
+/// JS3053.IncorrectNumberOfArguments,
+/// JS2005.UseShortFormInitializations,
+/// JS2073.CommentIsMisspelled,
+/// JS3092.DeclarePropertiesBeforeUse
+/// </disable>
+
+/// #endregion JSCop/JsHint
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
 function BlockFunctionTypeDef(message, blockIndex, initialHashValues, k, w) {
     /// <signature>
@@ -1029,6 +1211,38 @@ var msrcryptoSha = function (name, der, h, k, blockBytes, blockFunction, truncat
 
 };
 
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global operations */
+/* jshint -W016 */
+/* jshint -W052 */
+
+/// <reference path="operations.js" />
+
+/// <dictionary>msrcrypto, der, sha</dictionary>
+
+/// <disable>JS3057.AvoidImplicitTypeCoercion</disable>
+
+/// #endregion JSCop/JsHint
+
 var msrcryptoSha256 = (function () {
 
     var utils = msrcryptoUtilities;
@@ -1134,7 +1348,7 @@ var msrcryptoSha256 = (function () {
 
 if (typeof operations !== "undefined") {
 
-    msrcryptoSha256.hash256 = function ( p) {
+    msrcryptoSha256.hash256 = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha256.sha256.process(p.buffer);
@@ -1149,7 +1363,7 @@ if (typeof operations !== "undefined") {
 
     };
 
-    msrcryptoSha256.hash224 = function ( p) {
+    msrcryptoSha256.hash224 = function (/*@dynamic*/p) {
 
         if (p.operationSubType === "process") {
             msrcryptoSha256.sha224.process(p.buffer);
@@ -1170,6 +1384,37 @@ if (typeof operations !== "undefined") {
 
 msrcryptoHashFunctions["sha-224"] = msrcryptoSha256.sha224;
 msrcryptoHashFunctions["sha-256"] = msrcryptoSha256.sha256;
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */ /* allows bitwise operators */
+
+/// <reference path="utilities.js" />
+
+/// <dictionary>
+///    msrcrypto,aes,mult,rcon,res,tmp,xor
+/// </dictionary>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoBlockCipher = (function()  {
 
@@ -1187,7 +1432,7 @@ var msrcryptoBlockCipher = (function()  {
     return {
 
         /// <summary>Advanced Encryption Standard implementation per FIPS 197.</summary>
-        aes: function ( keyBytes) {
+        aes: function ( /*@type(Array)*/ keyBytes) {
 
             // Set up the constants the first time we create an AES object only.
             if (!aesConstants) {
@@ -1306,24 +1551,24 @@ var msrcryptoBlockCipher = (function()  {
                 return [a[0] ^ b[0], a[1] ^ b[1], a[2] ^ b[2], a[3] ^ b[3]];
             };
 
-            var addRoundKey = function ( state, keySchedule, offset) {
+            var addRoundKey = function (/*@type(Array)*/state, keySchedule, offset) {
                 for (var i = 0 ; i < state.length ; i += 1) {
                     state[i] ^= keySchedule[i + offset];
                 }
             };
 
-            var rotWord = function ( word) {
+            var rotWord = function (/*@type(Array)*/word) {
                 var a = word[0];
                 word[0] = word[1]; word[1] = word[2]; word[2] = word[3]; word[3] = a;
             };
 
-            var subWord = function ( word) {
+            var subWord = function (/*@type(Array)*/word) {
                 for (var i = 0 ; i < word.length ; i += 1) {
                     word[i] = sBoxTable[word[i]];
                 }
             };
 
-            var invSubWord = function ( word) {
+            var invSubWord = function (/*@type(Array)*/word) {
                 for (var i = 0 ; i < word.length ; i += 1) {
                     word[i] = invSBoxTable[word[i]];
                 }
@@ -1333,7 +1578,7 @@ var msrcryptoBlockCipher = (function()  {
                 return [tab[4 * i], tab[4 * i + 1], tab[4 * i + 2], tab[4 * i + 3]];
             };
 
-            var setWord = function ( left, right, indexL, indexR) {
+            var setWord = function (/*@type(Array)*/left, /*@type(Array)*/right, indexL, indexR) {
                 left[4 * indexL] = right[4 * indexR];
                 left[4 * indexL + 1] = right[4 * indexR + 1];
                 left[4 * indexL + 2] = right[4 * indexR + 2];
@@ -1419,6 +1664,46 @@ var msrcryptoBlockCipher = (function()  {
     };
 
 })();
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoPseudoRandom */
+/* global msrcryptoJwk */
+/* global operations */
+/* global msrcryptoUtilities */
+/* global msrcryptoBlockCipher */
+/* jshint -W016 */ /* allows bitwise operators */
+
+/// <reference path="random.js" />
+/// <reference path="utilities.js" />
+/// <reference path="operations.js" />
+/// <reference path="jwk.js" />
+/// <reference path="aes.js" />
+
+/// <dictionary>
+///     Cbc,msrcrypto,res
+/// </dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoPadding = msrcryptoPadding || {};
 
@@ -1499,7 +1784,7 @@ var msrcryptoCbc = function (blockCipher) {
     var paddingScheme = msrcryptoPadding.pkcsv7(blockSize);
 
     // Merges an array of block arrays into a single byte array
-    var mergeBlocks = function ( tab) {
+    var mergeBlocks = function (/*@type(Array)*/tab) {
         var res = [], i, j;
         for (i = 0 ; i < tab.length; i += 1) {
             var block = tab[i];
@@ -1617,7 +1902,7 @@ var msrcryptoCbc = function (blockCipher) {
         },
 
         // Does a full decryption and returns the result
-        decrypt: function ( cipherBytes) {
+        decrypt: function (/*@type(Array)*/cipherBytes) {
             /// <summary>perform the decryption of the encrypted message</summary>
             /// <param name="encryptedBytes" type="Array">the plain text to encrypt</param>
             /// <returns type="Array">the encrypted message</returns>
@@ -1755,7 +2040,39 @@ if (typeof operations !== "undefined") {
     operations.register("generateKey", "aes-cbc", msrcryptoCbc.generateKey);
     operations.register("encrypt", "aes-cbc", msrcryptoCbc.workerEncrypt);
     operations.register("decrypt", "aes-cbc", msrcryptoCbc.workerDecrypt);
-} function MsrcryptoPrng() {
+}
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+
+/* jshint -W016 */
+
+/// <reference path="utilities.js" />
+/// <reference path="aes.js" />
+
+/// <dictionary>msrcrypto, utils, xor, res, csrc, nist, nistpubs, prng</dictionary>
+
+/// #endregion JSCop/JsHint
+
+/* @constructor */ function MsrcryptoPrng() {
     /// <summary>Pseudo Random Number Generator function/class.</summary>
     /// <remarks>This is the PRNG engine, not the entropy collector.
     /// The engine must be initialized with adequate entropy in order to generate cryptographically secure
@@ -1815,7 +2132,7 @@ if (typeof operations !== "undefined") {
         reseedCounter = 1;
     }
 
-    function reseed(entropy, additionalEntropy) {
+    function reseed(entropy,/*@optional*/ additionalEntropy) {
         /// <summary>Reseed the PRNG with additional entropy.</summary>
         /// <param name="entropy" type="Array">Input entropy.</param>
         /// <param name="additionalEntropy" type="Array">Optional additional entropy input.</param>
@@ -1851,7 +2168,7 @@ if (typeof operations !== "undefined") {
         v = temp.slice(keyLen);
     }
 
-    function generate(requestedBytes, additionalInput) {
+    function generate(requestedBytes,/*@optional*/ additionalInput) {
         /// <summary>Generate pseudo-random bits, and update the internal PRNG state.</summary>
         /// <param name="requestedBytes" type="Number">Number of pseudorandom bytes to be returned.</param>
         /// <param name="additionalInput" type="Array">Application-provided additional input array (optional).</param>
@@ -1890,7 +2207,7 @@ if (typeof operations !== "undefined") {
         /// <param name="entropy" type="Array">Input entropy.</param>
         /// <param name="additionalEntropy" type="Array">Optional additional entropy input.</param>
 
-        init: function (entropy, personalization) {
+        init: function (entropy,/*@optional*/ personalization) {
             /// <summary>Initialize the PRNG by seeing with entropy and optional input data.</summary>
             /// <param name="entropy" type="Array">Input entropy.</param>
             /// <param name="personalization" type="Array">Optional input.</param>
@@ -1901,11 +2218,11 @@ if (typeof operations !== "undefined") {
             reseed(entropy, personalization);
             initialized = true;
         },
-        getBytes: function (length, additionalInput) {
+        getBytes: function (length, /*@optional*/ additionalInput) {
             if (!initialized) {
                 throw new Error("can't get randomness before initialization");
             }
-            return generate(length, additionalInput);
+            return generate(length, /*@optional*/ additionalInput);
         },
         getNonZeroBytes: function (length, additionalInput) {
             if (!initialized) {
@@ -1928,7 +2245,45 @@ if (typeof operations !== "undefined") {
 // This is the PRNG object per instantiation, including one per worker.
 // The instance in the main thread is used to seed the instances in workers.
 // TODO: Consider combining the entropy pool in the main thread with the PRNG instance in the main thread.
+/// <disable>JS3085.VariableDeclaredMultipleTimes</disable>
 var msrcryptoPseudoRandom = new MsrcryptoPrng();
+/// <enable>JS3085.VariableDeclaredMultipleTimes</enable>
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+
+/* global msrcryptoUtilities */
+/* global arrayHelper */
+/* global MsrcryptoPrng */
+
+/* jshint -W016 */
+
+/// <reference path="random.js" />
+/// <reference path="utilities.js" />
+/// <reference path="arrayHelper.js" />
+/// <reference path="jsCopDefs.js" />
+
+/// <dictionary>arr,msrcrypto,Prng,req,res,mozilla,polyfill,PRNGs,redirectlocale,redirectslug</dictionary>
+
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 function MsrcryptoEntropy() {
     /// <summary>Opportunistic entropy collector.</summary>
@@ -1968,7 +2323,7 @@ function MsrcryptoEntropy() {
             if (window.Uint8Array) {
                 var res = new window.Uint8Array(poolLength);
                 prngCrypto.getRandomValues(res);
-                pool = pool.concat(Array.apply(null, res));
+                pool = pool.concat(Array.apply(null, /*@static_cast(Array)*/res));
                 cryptographicPRNGPresent = true;
             }
         }
@@ -2112,6 +2467,57 @@ function MsrcryptoEntropy() {
         }
     };
 }
+///#source 1 1 /scripts/subtle/head.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
+
+/// #region JSCop/JsHint
+/* global arrayHelper */
+/* global asyncMode: true */
+/* global createProperty */
+/* global defined */
+/* global msrcryptoUtilities */
+/* global msrcryptoWorker */
+/* global msrcryptoPseudoRandom */
+/* global fprngEntropyProvided: true */
+/* global runningInWorkerInstance */
+/* global scriptUrl */
+/* global setterSupport */
+/* global webWorkerSupport */
+/* global operations */
+/* jshint -W098 */
+/* W098 is 'defined but not used'. We have not-yet-implemented apis stubbed out. */
+
+/// <reference path="jsCopDefs.js" />
+/// <reference path="global.js" />
+/// <reference path="worker.js" />
+/// <reference path="utilities.js" />
+
+/// These are terms that JSCop thinks are misspelled, so we have to add them to its dictionary
+/// <dictionary>
+///    concat, msrcrypto, onabort, oncomplete, onerror, onmessage, onprogress, Params, prng,
+///    syncWorker, webworker, webworkers, obj
+/// </dictionary>
+
+//  JSCop cannot figure out the types correctly
+/// <disable>JS3092.DeclarePropertiesBeforeUse</disable>
+
+/// #endregion JSCop/JsHint
 
 var msrcryptoSubtle;
 
@@ -2119,8 +2525,26 @@ var msrcryptoSubtle;
 if (!runningInWorkerInstance) {
 
     msrcryptoSubtle = (function() {
+///#source 1 1 /scripts/subtle/promises.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
-// Add Promises if not supported
+// If no native Promise support add ours
 if (!window.Promise) {
 
     window.Promise = function (executor, id) {
@@ -2388,6 +2812,24 @@ if (!window.Promise) {
 
     //#endregion static methods
 }
+///#source 1 1 /scripts/subtle/syncWorker.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 // This worker is used when webworkers aren't available.
 // It will function synchronously but use the same
@@ -2407,7 +2849,7 @@ function syncWorker() {
         // When using a sync worker, we'll have to catch thrown errors, so we
         // need a try/catch block here.
         try {
-            result = msrcryptoWorker.jsCryptoRunner( { data: data });
+            result = msrcryptoWorker.jsCryptoRunner(/*@static_cast(typeEvent)*/{ data: data });
         } catch (ex) {
             this.onerror({ data: ex.description, type: "error" });
             return;
@@ -2430,6 +2872,24 @@ function syncWorker() {
         }
     };
 }
+///#source 1 1 /scripts/subtle/operations.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 /// <dictionary>Obj,oncomplete,onerror</dictionary>
 
@@ -2450,8 +2910,9 @@ function baseOperation(processResults) {
             rejectFunc = reject;
         });
 
+
     // Called when the worker returns a result
-    function opDispatchEvent( e) {
+    function opDispatchEvent(/*@type(Event)*/e) {
 
         // If the event is an Error call the onError callback
         if (e.type === "error") {
@@ -2574,6 +3035,25 @@ function toArrayBufferIfSupported(dataArray) {
     return dataArray;
 }
 
+///#source 1 1 /scripts/subtle/keyManager.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
+
 // Storage for the keyData.
 // Stored as {keyHandle: keyHandle, keyData: keyData} objects.
 var keys = [];
@@ -2596,6 +3076,24 @@ keys.lookup = function (keyHandle) {
     }
     return null;
 };
+///#source 1 1 /scripts/subtle/workerManager.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 // Manages the pool of webworkers and job queue.
 // We first try to find an idle webworker and pass it a crypto job.
@@ -2738,7 +3236,7 @@ var workerManager = (function () {
         worker.busy = false;
 
         // The worker will call this function when it completes its job.
-        worker.onmessage = function ( e) {
+        worker.onmessage = function (/*@type(typeEvent)*/ e) {
 
             var op = worker.operation;
 
@@ -2761,7 +3259,7 @@ var workerManager = (function () {
         };
 
         // If an error occurs within the worker.
-        worker.onerror = function ( e) {
+        worker.onerror = function (/*@type(typeEvent)*/ e) {
 
             var op = worker.operation;
 
@@ -2787,7 +3285,7 @@ var workerManager = (function () {
     }
 
     // Creates or reuses a worker and starts it up on work.
-    function runJob( operation, data) {
+    function runJob(/*@dynamic*/ operation, data) {
 
         var worker = null;
 
@@ -2795,6 +3293,7 @@ var workerManager = (function () {
         // Then run in synchronous mode even if webworkers are available.
         // This can be turned on or off on the fly.
         asyncMode = webWorkerSupport && !(publicMethods.forceSync);
+
 
         // Get the first idle worker.
         worker = getFreeWorker();
@@ -2872,6 +3371,24 @@ var workerManager = (function () {
     };
 
 })();
+///#source 1 1 /scripts/subtle/subtleInterface.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 var utils = msrcryptoUtilities;
 
@@ -3205,6 +3722,7 @@ var publicMethods = {
         ///     <returns type="KeyOperation" />
         /// </signature>
 
+
         return executeOperation("importKey", arguments, 1);
     },
 
@@ -3263,12 +3781,48 @@ var publicMethods = {
     }
 
 };
+///#source 1 1 /scripts/subtle/tail.js
+//*******************************************************************************
+//
+//    Copyright (c) 2018 Microsoft. All rights reserved.
+//    
+//    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
+//    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.
+//    YOU MAY OBTAIN A COPY OF THE LICENSE AT
+//    
+//    http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
+//    DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+//    SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
+//    LIMITATIONS UNDER THE LICENSE.
+//
+//*******************************************************************************
 
 return publicMethods;
 
 })();
 
 }
+
+//*******************************************************************************
+//
+//    Copyright 2018 Microsoft
+//    
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//    
+//        http://www.apache.org/licenses/LICENSE-2.0
+//    
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//
+//*******************************************************************************
 
 var publicMethods = {
 
@@ -3372,4 +3926,3 @@ if (!runningInWorkerInstance) {
 return publicMethods;
 
 })();
-

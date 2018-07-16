@@ -21,6 +21,8 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +42,19 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TypeScriptTarget>ES6</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Camelot, Version=1.2013.12.12, Culture=neutral, processorArchitecture=MSIL">
@@ -58,19 +73,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.TXT" />
-    <Content Include="msrcrypto.aes.js">
-      <DependentUpon>msrcrypto.aes.js.bundle</DependentUpon>
-    </Content>
+    <Content Include="dotNetWebService\DotNetWebService.asmx" />
+    <Content Include="msrcrypto.aes.js" />
     <Content Include="msrcrypto.aes.min.js">
       <DependentUpon>msrcrypto.aes.js</DependentUpon>
     </Content>
-    <Content Include="msrcrypto.js">
-      <DependentUpon>msrcrypto.js.bundle</DependentUpon>
-    </Content>
+    <Content Include="msrcrypto.js" />
     <Content Include="msrcrypto.min.js">
       <DependentUpon>msrcrypto.js</DependentUpon>
     </Content>
-    <Content Include="dotNetWebService\DotNetWebService.asmx" />
     <Content Include="scripts\aes-gcm.js" />
     <Content Include="scripts\aes-cbc.js" />
     <Content Include="scripts\aes.js" />
@@ -146,9 +157,7 @@
     <Content Include="scripts\testVectors\tv_sha1_long.js" />
     <Content Include="scripts\worker.js" />
     <Content Include="scripts\subtle\workerManager.js" />
-    <Content Include="msrcrypto.aes.min.js.map">
-      <DependentUpon>msrcrypto.aes.min.js</DependentUpon>
-    </Content>
+    <Content Include="bundleconfig.json" />
     <None Include="msrcrypto.intellisense.js" />
     <Content Include="scripts\wrapKey.js" />
     <Content Include="tests\CryptoECCTests.html" />
@@ -255,20 +264,13 @@
     <Content Include="tests\CryptoMathTests.html" />
     <Content Include="tests\DotNetInteropTests.html" />
     <Content Include="tests\SubtleTests.html" />
-    <None Include="msrcrypto.aes.js.bundle">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="msrcrypto.js.bundle" />
     <Content Include="scripts\subtle\subtle.js.bundle" />
-    <Content Include="msrcrypto.min.js.map">
-      <DependentUpon>msrcrypto.min.js</DependentUpon>
-    </Content>
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="dotNetWebService\KeyStructs.cs" />
     <Compile Include="dotNetWebService\DotNetWebService.asmx.cs">
       <DependentUpon>DotNetWebService.asmx</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -293,9 +295,16 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)release.vbs" "$(ProjectDir)msrcrypto.js" "$(ProjectDir)msrcrypto.release.js"
+"$(ProjectDir)release.vbs" "$(ProjectDir)msrcrypto.aes.js" "$(ProjectDir)msrcrypto.aes.release.js</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets" Condition="Exists('..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

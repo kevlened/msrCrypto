@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright (c) 2014 Microsoft. All rights reserved.
+//    Copyright (c) 2018 Microsoft. All rights reserved.
 //    
 //    LICENSED UNDER THE APACHE LICENSE, VERSION 2.0 (THE "LICENSE");
 //    YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE LICENSE.

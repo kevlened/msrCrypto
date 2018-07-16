@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -79,14 +79,6 @@ var msrcryptoEcdh = function (curve) {
 
         var publicPoint = new cryptoECC.EllipticCurvePointFp(
             e, false, btd(publicKey.x), btd(publicKey.y), null, false);
-
-        if (!publicPoint.isInMontgomeryForm) {
-            ecop.convertToMontgomeryForm(publicPoint);
-        }
-
-        if (!publicPoint.isAffine) {
-            ecop.convertToAffineForm(publicPoint);
-        }
 
         var sharedSecretPoint = e.allocatePointStorage();
         ecop.convertToJacobianForm(sharedSecretPoint);

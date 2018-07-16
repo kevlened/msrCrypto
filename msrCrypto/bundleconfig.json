@@ -1,0 +1,59 @@
+[
+  {
+    "outputFileName": "msrcrypto.aes.js",
+    "inputFiles": [
+      "scripts/bundleHead.js",
+      "scripts/operations.js",
+      "scripts/global.js",
+      "scripts/utilities.js",
+      "scripts/worker.js",
+      "scripts/jwk.js",
+      "scripts/sha.js",
+      "scripts/sha256.js",
+      "scripts/aes.js",
+      "scripts/aes-cbc.js",
+      "scripts/random.js",
+      "scripts/entropy.js",
+      "scripts/subtle.js",
+      "scripts/bundleTail.js"
+    ]
+  },
+
+  {
+    "outputFileName": "msrcrypto.js",
+    "inputFiles": [
+      "scripts/bundleHead.js",
+      "scripts/operations.js",
+      "scripts/global.js",
+      "scripts/utilities.js",
+      "scripts/worker.js",
+      "scripts/jwk.js",
+      "scripts/cryptoMath.js",
+      "scripts/cryptoECC.js",
+      "scripts/curves_NIST.js",
+      "scripts/curves_BN.js",
+      "scripts/curves_NUMS.js",
+      "scripts/sha.js",
+      "scripts/sha1.js",
+      "scripts/sha256.js",
+      "scripts/sha512.js",
+      "scripts/hmac.js",
+      "scripts/aes.js",
+      "scripts/aes-cbc.js",
+      "scripts/aes-gcm.js",
+      "scripts/random.js",
+      "scripts/entropy.js",
+      "scripts/rsa-base.js",
+      "scripts/rsa-oaep.js",
+      "scripts/rsa-pkcs1.js",
+      "scripts/rsa-pss.js",
+      "scripts/rsa.js",
+      "scripts/kdf.js",
+      "scripts/ecdh.js",
+      "scripts/ecdsa.js",
+      "scripts/subtle.js",
+      "scripts/wrapKey.js",
+      "scripts/bundleTail.js"
+    ]
+  }
+]

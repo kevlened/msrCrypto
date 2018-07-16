@@ -9,6 +9,13 @@ Included Scripts:
    	msrcrypto.aes.min.js	: AES-CBC and SHA-256 only in minified form
 
 
+Changes with version 1.4.1
+
+	Includes bug fixes to the elliptic curve module, to:
+		* avoid erroneous calculations that could theoretically leak private data 
+		* correct the NIST p-521 curve definition
+		* avoid rare failures in ECDSA when using the curves NUMSP512D1 and NUMSP512T1.
+
 Changes with version 1.4
 
 	The API has been updated to support the latest Web Crypto Api spec and be compatible with the
@@ -114,6 +121,9 @@ Bundling & web workers:
 	To force synchronous mode set the following property:
 	msrCrypto.subtle.forceSync = true;
 
+	The bundling of the scripts might require the installation of Bundler & Minifier extension:
+	https://marketplace.visualstudio.com/items?itemName=MadsKristensen.BundlerMinifier
+
 
 
 Native Crypto API:
@@ -169,7 +179,7 @@ Supported Algorithms:
 			Concat-KDF, ECDH 
 
 		Supported ECC curves:
-			P-256, P-384, P-512, BN-254, NUMSP256D1, NUMSP256T1, NUMSP384D1, NUMSP384T1
+			P-256, P-384, P-521, BN-254, NUMSP256D1, NUMSP256T1, NUMSP384D1, NUMSP384T1
 
 		KeyWrap
 			AES-GCM

@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -121,7 +121,10 @@ var msrcryptoEcdsa = function (curve) {
         cryptoMath.modInv(k, curve.order, tmp);
         cryptoMath.modMul(s, tmp, curve.order, s);
 
-        signature = dtb(r, true, orderByteLength).concat(dtb(s, true, orderByteLength));
+        // ensure the bytes arrays are of the expected size
+        var rBytes = msrcryptoUtilities.padFront(dtb(r, true, orderByteLength), 0, orderByteLength);
+        var sBytes = msrcryptoUtilities.padFront(dtb(s, true, orderByteLength), 0, orderByteLength);
+        signature = rBytes.concat(sBytes);
 
         return signature;
     }

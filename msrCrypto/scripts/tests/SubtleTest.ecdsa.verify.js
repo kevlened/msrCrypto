@@ -1,6 +1,6 @@
 ﻿//*******************************************************************************
 //
-//    Copyright 2014 Microsoft
+//    Copyright 2018 Microsoft
 //    
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -103,6 +103,18 @@ if (cryptoLibraries["msrcrypto.test.js"]) {
         msrCrypto = cryptoLibraries["msrcrypto.test.js"];
 
         ecdsa_verify_vector_tests.vectorTest("P-384", tv_ecdsa_verify["P-384"]);
+
+        msrCrypto = _msrCrypto;
+
+    });
+
+    test("Test Vectors P-521", function () {
+
+        _msrCrypto = msrCrypto;
+
+        msrCrypto = cryptoLibraries["msrcrypto.test.js"];
+
+        ecdsa_verify_vector_tests.vectorTest("P-521", tv_ecdsa_verify["P-521"]);
 
         msrCrypto = _msrCrypto;
 
