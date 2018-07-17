@@ -5,6 +5,7 @@
   "main": "dist/msrcrypto.js",
   "module": "dist/msrcrypto.mjs",
   "scripts": {
+    "test": "jest",
     "release": "git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
   "repository": {
@@ -25,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/kevlened/msrCrypto/issues"
   },
-  "homepage": "https://www.microsoft.com/en-us/download/details.aspx?id=52439"
+  "homepage": "https://www.microsoft.com/en-us/download/details.aspx?id=52439",
+  "devDependencies": {
+    "jest": "^23.4.1",
+    "webcrypto-test-suite": "^0.1.0"
+  }
 }

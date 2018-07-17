@@ -518,8 +518,8 @@ var msrcryptoUtilities = (function () {
         }
 
         // If it's an ArrayBuffer, convert it to a Uint8Array first
-        if (typedArray.isView) {
-            typedArray = Uint8Array(typedArray);
+        if (typedArray.isView || getObjectType(typedArray) === 'ArrayBuffer') {
+            typedArray = new Uint8Array(typedArray);
         }
 
         // A single element array will cause a new Array to be created with the length
@@ -9650,5 +9650,86 @@ if (!runningInWorkerInstance) {
 return publicMethods;
 
 })();
+
+function standardizeAlgoName(algo) {
+    var upper = algo.toUpperCase();
+    if (upper === 'HMAC') return 'hmac';
+    if (upper === 'RSASSA-PKCS1-V1_5') return 'RSASSA-PKCS1-v1_5';
+    return upper;
+}
+
+function b64u2bin(b64u) {
+    return atob(b64u
+        .replace(/-/g, '+')
+        .replace(/_/g, '/'));
+}
+
+function bin2Uint8(bin) {
+    var uint8Array = typeof Uint8Array === 'undefined' ? [] : new Uint8Array(bin.length);
+    for (var s = 0, sl = bin.length; s < sl; s++) {
+        uint8Array[s] = bin.charCodeAt(s);
+    }
+    return uint8Array;
+}
+
+var originalImportKey = msrCrypto.subtle.importKey;
+msrCrypto.subtle.importKey = function importKey() {
+    var importType = arguments[0];
+    var key = arguments[1];
+    return originalImportKey.apply(this, arguments)
+    .then(function(res) {
+        var algo = res.algorithm;
+        algo.name = standardizeAlgoName(algo.name);
+        if (algo.hash && algo.hash.name) algo.hash.name = algo.hash.name.toUpperCase();
+        switch(res.type) {
+            case 'secret':
+                res.usages = ['sign', 'verify'];
+                break;
+            case 'private':
+                res.usages = ['sign'];
+                break;
+            case 'public':
+                res.usages = ['verify'];
+                break;
+        }
+        if (importType === 'jwk' && key.kty === 'RSA') {
+            res.algorithm.modulusLength = b64u2bin(key.n).length * 8;
+            res.algorithm.publicExponent = bin2Uint8(b64u2bin(key.e));
+        }
+        return res;
+    });
+}
+
+var originalGenerateKey = msrCrypto.subtle.generateKey;
+msrCrypto.subtle.generateKey = function generateKey() {
+    return originalGenerateKey.apply(this, arguments)
+    .then(function(res) {
+        if (res.publicKey) {
+            res.publicKey.usages = ['verify'];
+            res.publicKey.algorithm.name = standardizeAlgoName(res.publicKey.algorithm.name);
+            res.privateKey.usages = ['sign'];
+            res.privateKey.algorithm.name = standardizeAlgoName(res.privateKey.algorithm.name);
+        } else {
+            res.usages = ['sign', 'verify'];
+            res.algorithm.name = standardizeAlgoName(res.algorithm.name);
+        }
+        return res;
+    });
+}
+
+var originalExportKey = msrCrypto.subtle.exportKey;
+msrCrypto.subtle.exportKey = function exportKey() {
+    return originalExportKey.apply(this, arguments)
+    .then(function(res) {
+        if (res.kty === 'RSA' || res.kty === 'EC') {
+            if (res.d) {
+                res.key_ops = ['sign'];
+            } else {
+                res.key_ops = ['verify'];
+            }
+        }
+        return res;
+    });
+}
 
 export default msrCrypto;
