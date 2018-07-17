@@ -5,3 +5,4 @@ Fixed check to convert ArrayBuffer to Uint8Array
 Modified exportKey to return key_ops
 Modified generateKey to return usages and algorithm name
 Modified importKey to return usages, modulusLength, publicExponent
+Added msrCryptoPermanentForceSync global option

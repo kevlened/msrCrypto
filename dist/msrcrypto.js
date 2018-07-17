@@ -78,11 +78,14 @@ var scriptUrl = (function () {
 // Indication if the user provided entropy into the entropy pool.
 var fprngEntropyProvided = false;
 
+var glb = (typeof global === "undefined") ? window : global;
+var isPermanentForceSync = glb && glb.msrCryptoPermanentForceSync;
+
 // Support for webWorkers IE10+.
-var webWorkerSupport = (typeof Worker !== "undefined");
+var webWorkerSupport = (typeof Worker !== "undefined") && !isPermanentForceSync;
 
 // Is this script running in an instance of a webWorker?
-var runningInWorkerInstance = (typeof importScripts !== "undefined");
+var runningInWorkerInstance = (typeof importScripts !== "undefined") && !isPermanentForceSync;
 
 // Typed Arrays support?
 var typedArraySupport = (typeof Uint8Array !== "undefined");
