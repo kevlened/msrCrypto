@@ -29,6 +29,6 @@
   "homepage": "https://www.microsoft.com/en-us/download/details.aspx?id=52439",
   "devDependencies": {
     "jest": "^23.4.1",
-    "webcrypto-test-suite": "^0.1.0"
+    "webcrypto-test-suite": "^0.1.1"
   }
 }

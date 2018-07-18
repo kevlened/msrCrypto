@@ -9654,11 +9654,15 @@ return publicMethods;
 
 })();
 
-function standardizeAlgoName(algo) {
-    var upper = algo.toUpperCase();
-    if (upper === 'HMAC') return 'hmac';
+function standardizeAlgoName(name) {
+    var upper = name.toUpperCase();
     if (upper === 'RSASSA-PKCS1-V1_5') return 'RSASSA-PKCS1-v1_5';
     return upper;
+}
+
+function standardizeAlgo(algo) {
+    algo.name = algo.name && standardizeAlgoName(algo.name);
+    if (algo.hash) algo.hash.name = algo.hash.name && algo.hash.name.toUpperCase();
 }
 
 function b64u2bin(b64u) {
@@ -9681,9 +9685,7 @@ msrCrypto.subtle.importKey = function importKey() {
     var key = arguments[1];
     return originalImportKey.apply(this, arguments)
     .then(function(res) {
-        var algo = res.algorithm;
-        algo.name = standardizeAlgoName(algo.name);
-        if (algo.hash && algo.hash.name) algo.hash.name = algo.hash.name.toUpperCase();
+        standardizeAlgo(res.algorithm);
         switch(res.type) {
             case 'secret':
                 res.usages = ['sign', 'verify'];
@@ -9709,12 +9711,12 @@ msrCrypto.subtle.generateKey = function generateKey() {
     .then(function(res) {
         if (res.publicKey) {
             res.publicKey.usages = ['verify'];
-            res.publicKey.algorithm.name = standardizeAlgoName(res.publicKey.algorithm.name);
+            standardizeAlgo(res.publicKey.algorithm);
             res.privateKey.usages = ['sign'];
-            res.privateKey.algorithm.name = standardizeAlgoName(res.privateKey.algorithm.name);
+            standardizeAlgo(res.privateKey.algorithm);
         } else {
             res.usages = ['sign', 'verify'];
-            res.algorithm.name = standardizeAlgoName(res.algorithm.name);
+            standardizeAlgo(res.algorithm);
         }
         return res;
     });
