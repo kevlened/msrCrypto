@@ -17,8 +17,13 @@
 //*******************************************************************************
 
 // Don't enforce entropy in environments without document
-if (typeof document === 'undefined') {
-    document = {
+var glb = typeof global !== "undefined" ? global :
+          typeof window !== "undefined" ? window :
+          typeof self !== "undefined" ? self :
+          undefined;
+
+if (typeof document === 'undefined' && glb) {
+    glb.document = {
         attachEvent: function() {}
     };
 }
@@ -80,7 +85,6 @@ var scriptUrl = (function () {
 // Indication if the user provided entropy into the entropy pool.
 var fprngEntropyProvided = false;
 
-var glb = (typeof global === "undefined") ? window : global;
 var isPermanentForceSync = glb && glb.msrCryptoPermanentForceSync;
 
 // Support for webWorkers IE10+.
@@ -9681,62 +9685,64 @@ function bin2Uint8(bin) {
     return uint8Array;
 }
 
-var originalImportKey = msrCrypto.subtle.importKey;
-msrCrypto.subtle.importKey = function importKey() {
-    var importType = arguments[0];
-    var key = arguments[1];
-    return originalImportKey.apply(this, arguments)
-    .then(function(res) {
-        standardizeAlgo(res.algorithm);
-        switch(res.type) {
-            case 'secret':
-                res.usages = ['sign', 'verify'];
-                break;
-            case 'private':
-                res.usages = ['sign'];
-                break;
-            case 'public':
-                res.usages = ['verify'];
-                break;
-        }
-        if (importType === 'jwk' && key.kty === 'RSA') {
-            res.algorithm.modulusLength = b64u2bin(key.n).length * 8;
-            res.algorithm.publicExponent = bin2Uint8(b64u2bin(key.e));
-        }
-        return res;
-    });
-}
-
-var originalGenerateKey = msrCrypto.subtle.generateKey;
-msrCrypto.subtle.generateKey = function generateKey() {
-    return originalGenerateKey.apply(this, arguments)
-    .then(function(res) {
-        if (res.publicKey) {
-            res.publicKey.usages = ['verify'];
-            standardizeAlgo(res.publicKey.algorithm);
-            res.privateKey.usages = ['sign'];
-            standardizeAlgo(res.privateKey.algorithm);
-        } else {
-            res.usages = ['sign', 'verify'];
+if (msrCrypto && msrCrypto.subtle) {
+    var originalImportKey = msrCrypto.subtle.importKey;
+    msrCrypto.subtle.importKey = function importKey() {
+        var importType = arguments[0];
+        var key = arguments[1];
+        return originalImportKey.apply(this, arguments)
+        .then(function(res) {
             standardizeAlgo(res.algorithm);
-        }
-        return res;
-    });
-}
-
-var originalExportKey = msrCrypto.subtle.exportKey;
-msrCrypto.subtle.exportKey = function exportKey() {
-    return originalExportKey.apply(this, arguments)
-    .then(function(res) {
-        if (res.kty === 'RSA' || res.kty === 'EC') {
-            if (res.d) {
-                res.key_ops = ['sign'];
-            } else {
-                res.key_ops = ['verify'];
+            switch(res.type) {
+                case 'secret':
+                    res.usages = ['sign', 'verify'];
+                    break;
+                case 'private':
+                    res.usages = ['sign'];
+                    break;
+                case 'public':
+                    res.usages = ['verify'];
+                    break;
             }
-        }
-        return res;
-    });
+            if (importType === 'jwk' && key.kty === 'RSA') {
+                res.algorithm.modulusLength = b64u2bin(key.n).length * 8;
+                res.algorithm.publicExponent = bin2Uint8(b64u2bin(key.e));
+            }
+            return res;
+        });
+    }
+
+    var originalGenerateKey = msrCrypto.subtle.generateKey;
+    msrCrypto.subtle.generateKey = function generateKey() {
+        return originalGenerateKey.apply(this, arguments)
+        .then(function(res) {
+            if (res.publicKey) {
+                res.publicKey.usages = ['verify'];
+                standardizeAlgo(res.publicKey.algorithm);
+                res.privateKey.usages = ['sign'];
+                standardizeAlgo(res.privateKey.algorithm);
+            } else {
+                res.usages = ['sign', 'verify'];
+                standardizeAlgo(res.algorithm);
+            }
+            return res;
+        });
+    }
+
+    var originalExportKey = msrCrypto.subtle.exportKey;
+    msrCrypto.subtle.exportKey = function exportKey() {
+        return originalExportKey.apply(this, arguments)
+        .then(function(res) {
+            if (res.kty === 'RSA' || res.kty === 'EC') {
+                if (res.d) {
+                    res.key_ops = ['sign'];
+                } else {
+                    res.key_ops = ['verify'];
+                }
+            }
+            return res;
+        });
+    }
 }
 
 module.exports = msrCrypto;
