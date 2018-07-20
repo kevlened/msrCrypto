@@ -17,9 +17,11 @@
 //*******************************************************************************
 
 // Don't enforce entropy in environments without document
-document = typeof document === 'undefined' ? {
-    attachEvent: function() {}
-} : document;
+if (typeof document === 'undefined') {
+    document = {
+        attachEvent: function() {}
+    };
+}
 
 var msrCryptoVersion = "1.4.1";
 var msrCrypto = msrCrypto || (function () {
@@ -8148,7 +8150,7 @@ if (typeof operations !== "undefined") {
     msrcryptoEcdsa.sign = function ( p) {
 
         var hashName = p.algorithm.hash.name,
-            curve = cryptoECC.createCurve(p.algorithm.namedCurve.toUpperCase()),
+            curve = cryptoECC.createCurve(p.keyHandle.algorithm.namedCurve.toUpperCase()),
             hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],
             digest = hashFunc.computeHash(p.buffer);
 
@@ -8160,7 +8162,7 @@ if (typeof operations !== "undefined") {
     msrcryptoEcdsa.verify = function ( p) {
 
         var hashName = p.algorithm.hash.name,
-            curve = cryptoECC.createCurve(p.algorithm.namedCurve.toUpperCase()),
+            curve = cryptoECC.createCurve(p.keyHandle.algorithm.namedCurve.toUpperCase()),
             hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],
             digest = hashFunc.computeHash(p.buffer);
 
@@ -8566,7 +8568,7 @@ function syncWorker() {
         try {
             result = msrcryptoWorker.jsCryptoRunner( { data: data });
         } catch (ex) {
-            this.onerror({ data: ex.description, type: "error" });
+            this.onerror({ data: ex.message, type: "error" });
             return;
         }
 

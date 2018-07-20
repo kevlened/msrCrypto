@@ -513,8 +513,8 @@ var msrcryptoUtilities = (function () {
         }
 
         // If it's an ArrayBuffer, convert it to a Uint8Array first
-        if (typedArray.isView) {
-            typedArray = Uint8Array(typedArray);
+        if (typedArray.isView || getObjectType(typedArray) === "ArrayBuffer") {
+            typedArray = new Uint8Array(typedArray);
         }
 
         // A single element array will cause a new Array to be created with the length
@@ -8140,7 +8140,7 @@ if (typeof operations !== "undefined") {
     msrcryptoEcdsa.sign = function ( p) {
 
         var hashName = p.algorithm.hash.name,
-            curve = cryptoECC.createCurve(p.algorithm.namedCurve.toUpperCase()),
+            curve = cryptoECC.createCurve(p.keyHandle.algorithm.namedCurve.toUpperCase()),
             hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],
             digest = hashFunc.computeHash(p.buffer);
 
@@ -8152,7 +8152,7 @@ if (typeof operations !== "undefined") {
     msrcryptoEcdsa.verify = function ( p) {
 
         var hashName = p.algorithm.hash.name,
-            curve = cryptoECC.createCurve(p.algorithm.namedCurve.toUpperCase()),
+            curve = cryptoECC.createCurve(p.keyHandle.algorithm.namedCurve.toUpperCase()),
             hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],
             digest = hashFunc.computeHash(p.buffer);
 
@@ -8558,7 +8558,7 @@ function syncWorker() {
         try {
             result = msrcryptoWorker.jsCryptoRunner( { data: data });
         } catch (ex) {
-            this.onerror({ data: ex.description, type: "error" });
+            this.onerror({ data: ex.message, type: "error" });
             return;
         }
 
