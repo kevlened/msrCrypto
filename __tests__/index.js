@@ -1,4 +1,5 @@
-const crypto = require('../dist/msrcrypto');
+const hasDocument = typeof document !== 'undefined';
+const crypto = require('../');
 
 require('webcrypto-test-suite')({
   crypto,
@@ -9,31 +10,34 @@ require('webcrypto-test-suite')({
   }
 });
 
-describe('msrCryptoPermanentForceSync', () => {
-  beforeEach(() => jest.resetModules());
-
-  it('attempts to use Worker if available', async () => {
-    global.Worker = jest.fn(() => {
-      throw 'Will get caught';
+// Can't use jest in a browser
+if (!hasDocument && typeof describe !== 'undefined') {
+  describe('msrCryptoPermanentForceSync', () => {
+    beforeEach(() => jest.resetModules());
+  
+    it('attempts to use Worker if available', async () => {
+      global.Worker = jest.fn(() => {
+        throw 'Will get caught';
+      });
+      const msrCrypto = require('../');
+      await msrCrypto.subtle.digest(
+        { name: 'SHA-256' },
+        new Uint8Array([1,2,3]).buffer
+      );
+      expect(global.Worker).toHaveBeenCalled();
     });
-    const msrCrypto = require('../dist/msrcrypto');
-    await msrCrypto.subtle.digest(
-      { name: 'SHA-256' },
-      new Uint8Array([1,2,3]).buffer
-    );
-    expect(global.Worker).toHaveBeenCalled();
-  });
-
-  it('does not attempt to use Worker if msrCryptoPermanentForceSync enabled', async () => {
-    global.msrCryptoPermanentForceSync = true;
-    global.Worker = jest.fn(() => {
-      throw 'Will get caught';
+  
+    it('does not attempt to use Worker if msrCryptoPermanentForceSync enabled', async () => {
+      global.msrCryptoPermanentForceSync = true;
+      global.Worker = jest.fn(() => {
+        throw 'Will get caught';
+      });
+      const msrCrypto = require('../');
+      await msrCrypto.subtle.digest(
+        { name: 'SHA-256' },
+        new Uint8Array([1,2,3]).buffer
+      );
+      expect(global.Worker).not.toHaveBeenCalled();
     });
-    const msrCrypto = require('../dist/msrcrypto');
-    await msrCrypto.subtle.digest(
-      { name: 'SHA-256' },
-      new Uint8Array([1,2,3]).buffer
-    );
-    expect(global.Worker).not.toHaveBeenCalled();
   });
-});
+}
