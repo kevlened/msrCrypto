@@ -1,6 +1,6 @@
 {
   "name": "msrcrypto",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "MSR JavaScript Cryptography Library",
   "main": "dist/msrcrypto.js",
   "module": "dist/msrcrypto.mjs",

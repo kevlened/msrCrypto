@@ -6,3 +6,8 @@ Modified exportKey to return key_ops
 Modified generateKey to return usages and algorithm name
 Modified importKey to return usages, modulusLength, publicExponent
 Added msrCryptoPermanentForceSync global option
+
+73d70bee6e46551c4dc2b6047cff7b496b3a01ef
+fix(error): include error message
+fix: don't overwrite document which is readonly in browsers
+fix(ecdsa): extract named curve from keyHandle
