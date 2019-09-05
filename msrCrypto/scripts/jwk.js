@@ -94,7 +94,7 @@ var msrcryptoJwk = (function () {
 
         "rsa-pss": function (algorithm) {
 
-            return "PS-" + algorithm.hash.name.substring(algorithm.hash.name.indexOf('-') + 1);
+            return "PS" + algorithm.hash.name.substring(algorithm.hash.name.indexOf('-') + 1);
         },
 
         "ecdsa": function (algorithm) {

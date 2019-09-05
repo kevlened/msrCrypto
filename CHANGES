@@ -11,3 +11,5 @@ Added msrCryptoPermanentForceSync global option
 fix(error): include error message
 fix: don't overwrite document which is readonly in browsers
 fix(ecdsa): extract named curve from keyHandle
+
+fix(rsa-pss): remove extra hyphen from alg
