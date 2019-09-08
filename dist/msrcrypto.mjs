@@ -773,7 +773,13 @@ var msrcryptoJwk = (function () {
         "ecdsa": function (algorithm) {
 
             return "EC-" + algorithm.namedCurve.substring(algorithm.namedCurve.indexOf('-') + 1);
-        }
+        },
+              
+        "ecdh": function (algorithm) {
+
+            return "EC-" + algorithm.namedCurve.substring(algorithm.namedCurve.indexOf('-') + 1);
+        }              
+             
     };
 
     function keyToJwk(keyHandle, keyData) {
