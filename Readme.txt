@@ -9,7 +9,7 @@ Included Scripts:
    	msrcrypto.aes.min.js	: AES-CBC and SHA-256 only in minified form
 
 
-Changes with version 1.4.1
+Changes with version 1.5.5
 
 	Includes bug fixes to the elliptic curve module, to:
 		* avoid erroneous calculations that could theoretically leak private data 
