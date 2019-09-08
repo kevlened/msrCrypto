@@ -13,3 +13,4 @@ fix: don't overwrite document which is readonly in browsers
 fix(ecdsa): extract named curve from keyHandle
 
 fix(rsa-pss): remove extra hyphen from alg
+fix: add missing ecdh to algorithmMap
