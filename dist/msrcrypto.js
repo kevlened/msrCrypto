@@ -40,7 +40,7 @@ if (typeof document === 'undefined' && glb) {
     };
 }
 
-var msrCryptoVersion = "1.5.5";
+var msrCryptoVersion = "1.5.6";
 var msrCrypto = msrCrypto || (function () {
 
     "use strict";

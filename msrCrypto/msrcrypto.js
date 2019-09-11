@@ -18,7 +18,7 @@
 
 /* jshint -W016 */ /* repress binary operator errors */
 /* jshint -W052 */ /* repress complaint about binary NOT operator*/
-var msrCryptoVersion = "1.5.5";
+var msrCryptoVersion = "1.5.6";
 var msrCrypto = msrCrypto || (function () {
 
 
