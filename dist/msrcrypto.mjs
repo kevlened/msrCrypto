@@ -16,6 +16,18 @@
 //
 //*******************************************************************************
 
+//*******************************************************************************
+//
+//    NOTICE
+//    
+//    This file has been modified from the original source:
+//      https://www.microsoft.com/en-us/download/details.aspx?id=52439
+//    
+//    To see changes, check the commit history here:
+//      https://github.com/kevlened/msrCrypto/commits/master
+//
+//*******************************************************************************
+
 // Don't enforce entropy in environments without document
 var glb = typeof global !== "undefined" ? global :
           typeof window !== "undefined" ? window :

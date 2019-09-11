@@ -1,5 +1,5 @@
-﻿This library has been modified from the original.
-A list of changes is available in [the CHANGES file](https://github.com/kevlened/msrCrypto/blob/master/CHANGES).
+﻿This library has been modified from [the original](https://www.microsoft.com/en-us/download/details.aspx?id=52439).
+A list of changes is available in [the commit history](https://github.com/kevlened/msrCrypto/commits/master).
 
 Included Scripts:
 
@@ -9,7 +9,7 @@ Included Scripts:
    	msrcrypto.aes.min.js	: AES-CBC and SHA-256 only in minified form
 
 
-Changes with version 1.5.5
+Changes with version 1.4.1
 
 	Includes bug fixes to the elliptic curve module, to:
 		* avoid erroneous calculations that could theoretically leak private data 
