@@ -774,12 +774,11 @@ var msrcryptoJwk = (function () {
 
             return "EC-" + algorithm.namedCurve.substring(algorithm.namedCurve.indexOf('-') + 1);
         },
-              
+        
         "ecdh": function (algorithm) {
 
             return "EC-" + algorithm.namedCurve.substring(algorithm.namedCurve.indexOf('-') + 1);
-        }              
-             
+        }
     };
 
     function keyToJwk(keyHandle, keyData) {
@@ -9662,10 +9661,6 @@ if (!runningInWorkerInstance) {
     msrcryptoPseudoRandom.init(localEntropy);
 }
 
-return publicMethods;
-
-})();
-
 function standardizeAlgoName(name) {
     var upper = name.toUpperCase();
     if (upper === 'RSASSA-PKCS1-V1_5') return 'RSASSA-PKCS1-v1_5';
@@ -9691,11 +9686,68 @@ function bin2Uint8(bin) {
     return uint8Array;
 }
 
-if (msrCrypto && msrCrypto.subtle) {
-    var originalImportKey = msrCrypto.subtle.importKey;
-    msrCrypto.subtle.importKey = function importKey() {
+var algMap = {
+    HMAC: {
+        'SHA-256': 'HS256',
+        'SHA-384': 'HS384',
+        'SHA-512': 'HS512'
+    },
+    'AES-GCM': {
+        128: 'A128GCM',
+        192: 'A192GCM',
+        256: 'A256GCM'
+    },
+    'AES-CBC': {
+        128: 'A128CBC',
+        192: 'A192CBC',
+        256: 'A256CBC'
+    }
+};
+
+function getAlg(algorithm, key) {
+    var key1 = algorithm.name;
+    if (!key1) key1 = algorithm;
+    var key2 = algorithm.length || (key.length * 8);
+    if (key1 === 'HMAC') {
+        key2 = algorithm.hash.name;
+    }
+    var alg = algMap[key1] && algMap[key1][key2];
+    if (!alg) {
+        console.log(algorithm, key);
+        throw new Error('Could not find an appropriate alg');
+    }
+    return alg;
+}
+
+function toArrayBufferIfSupported(dataArray) {
+
+    // If the browser supports typed-arrays, return an ArrayBuffer like IE11.
+    if (typedArraySupport && dataArray.pop) {
+
+        // We can't write to an ArrayBuffer directly so we create a Uint8Array
+        //   and return it's buffer property.
+        return (new Uint8Array(dataArray)).buffer;
+    }
+
+    // Do nothing and just return the passed-in array.
+    return dataArray;
+}
+
+if (publicMethods && publicMethods.subtle) {
+    var originalImportKey = publicMethods.subtle.importKey;
+    publicMethods.subtle.importKey = function importKey() {
         var importType = arguments[0];
         var key = arguments[1];
+        var algorithm = arguments[2];
+        if (importType === 'raw') {
+            key = msrcryptoUtilities.toArray(key);
+            key = arguments[1] = {
+                kty: 'oct',
+                k: msrcryptoUtilities.toBase64(key),
+                alg: getAlg(algorithm, key),
+                ext: true
+            }
+        }
         return originalImportKey.apply(this, arguments)
         .then(function(res) {
             standardizeAlgo(res.algorithm);
@@ -9710,7 +9762,7 @@ if (msrCrypto && msrCrypto.subtle) {
                     res.usages = ['verify'];
                     break;
             }
-            if (importType === 'jwk' && key.kty === 'RSA') {
+            if (key.kty === 'RSA') {
                 res.algorithm.modulusLength = b64u2bin(key.n).length * 8;
                 res.algorithm.publicExponent = bin2Uint8(b64u2bin(key.e));
             }
@@ -9718,8 +9770,8 @@ if (msrCrypto && msrCrypto.subtle) {
         });
     }
 
-    var originalGenerateKey = msrCrypto.subtle.generateKey;
-    msrCrypto.subtle.generateKey = function generateKey() {
+    var originalGenerateKey = publicMethods.subtle.generateKey;
+    publicMethods.subtle.generateKey = function generateKey() {
         return originalGenerateKey.apply(this, arguments)
         .then(function(res) {
             if (res.publicKey) {
@@ -9735,8 +9787,9 @@ if (msrCrypto && msrCrypto.subtle) {
         });
     }
 
-    var originalExportKey = msrCrypto.subtle.exportKey;
-    msrCrypto.subtle.exportKey = function exportKey() {
+    var originalExportKey = publicMethods.subtle.exportKey;
+    publicMethods.subtle.exportKey = function exportKey() {
+        var exportType = arguments[0];
         return originalExportKey.apply(this, arguments)
         .then(function(res) {
             if (res.kty === 'RSA' || res.kty === 'EC') {
@@ -9746,10 +9799,17 @@ if (msrCrypto && msrCrypto.subtle) {
                     res.key_ops = ['verify'];
                 }
             }
+            if (exportType === 'raw') {
+                res = toArrayBufferIfSupported(msrcryptoUtilities.base64ToBytes(res.k));
+            }
             return res;
         });
     }
 }
+
+return publicMethods;
+
+})();
 
 export const subtle = msrCrypto.subtle;
 export default msrCrypto;
