@@ -987,7 +987,7 @@ function buildParameterCollection(operationName, parameterSet) {
         var actualParam = parameterSet[i];
 
         // Verify the required parameters are present.
-        if (actualParam===null) {
+        if (actualParam==null) {
             if (expectedParam.required) {
                 throw new Error(expectedParam.name);
             } else {
