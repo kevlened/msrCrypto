@@ -8934,9 +8934,11 @@ var workerManager = (function () {
 
             // Send the results to the operation object and it will fire
             //   it's onCompleted event.
-            if (op && e.data && e.data.type !== "process") {
+            if (op) {
                 jobCompleted(worker);
-                op.dispatchEvent(e);
+                if(e.data && e.data.type !== "process"){
+                  op.dispatchEvent(e);
+                }
             }
         };
 
