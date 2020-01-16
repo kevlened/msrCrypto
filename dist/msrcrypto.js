@@ -1,13 +1,13 @@
 //*******************************************************************************
 //
 //    Copyright 2018 Microsoft
-//    
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-//    
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-//    
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,10 @@
 //*******************************************************************************
 //
 //    NOTICE
-//    
+//
 //    This file has been modified from the original source:
 //      https://www.microsoft.com/en-us/download/details.aspx?id=52439
-//    
+//
 //    To see changes, check the commit history here:
 //      https://github.com/kevlened/msrCrypto/commits/master
 //
@@ -85,7 +85,7 @@ var scriptUrl = (function () {
         }
     } else if (typeof self !== "undefined") {
         // If this script is being run in a WebWorker, 'document' will not exist
-        //  but we can use self.        
+        //  but we can use self.
         return self.location.href;
     }
 
@@ -748,7 +748,7 @@ var msrcryptoJwk = (function () {
     }
 
     var algorithmMap = {
-    
+
         hmac : function(algorithm) {
                     return "HS" + algorithm.hash.name.substring(algorithm.hash.name.indexOf('-') + 1);
         },
@@ -786,7 +786,7 @@ var msrcryptoJwk = (function () {
 
             return "EC-" + algorithm.namedCurve.substring(algorithm.namedCurve.indexOf('-') + 1);
         },
-        
+
         "ecdh": function (algorithm) {
 
             return "EC-" + algorithm.namedCurve.substring(algorithm.namedCurve.indexOf('-') + 1);
@@ -861,7 +861,7 @@ var msrcryptoJwk = (function () {
         for (var i = 0; i < propsToArray.length; i += 1) {
             var propValue = jsonKeyObject[propsToArray[i]];
             if (propValue) {
-                jsonKeyObject[propsToArray[i]] = 
+                jsonKeyObject[propsToArray[i]] =
                    utils.base64ToBytes(propValue);
             }
         }
@@ -1265,7 +1265,7 @@ function msrcryptoMath() {
     }
 
     function digitsToBytes(digits, trim, minTrimLength) {
-        /// <summary>Construct a big endian array of bytes from a litte-endian array of digits. 
+        /// <summary>Construct a big endian array of bytes from a litte-endian array of digits.
         /// Always returns at least one byte and trims leading zeros.</summary>
         /// <param name="digits" type="Array">The digits in little-endian.</param>
         /// <param name="trim" type="Boolean" optional="true">Remove the leading zeros from the result (default true)</param>
@@ -1348,8 +1348,8 @@ function msrcryptoMath() {
         /// Digit arrays are in little endian.</summary>
         /// <param name="left" type="Array">The object on the left side of the comparison.</param>
         /// <param name="right" type="Array">The object on the right side of the comparison.</param>
-        /// <returns type="Number">A value that indicates the relative order of the objects 
-        ///                           being compared. The value is 0 if the items are equal, 
+        /// <returns type="Number">A value that indicates the relative order of the objects
+        ///                           being compared. The value is 0 if the items are equal,
         ///                           negative if the left object precedes the right object,
         ///                           and positive otherwise.</returns>
 
@@ -1951,7 +1951,7 @@ function msrcryptoMath() {
         /// <summary>Construct a new montgomeryMultiplier object with the given modulus.</summary>
         /// <param name="modulus" type="Array">A prime modulus in little-endian digit form</param>
         /// <remarks>Montgomery Multiplier class
-        /// This class implements high performance montgomery multiplication using 
+        /// This class implements high performance montgomery multiplication using
         /// CIOS, as well as modular exponentiation.</remarks>
 
         function computeM0Prime(m0) {
@@ -2039,7 +2039,7 @@ function msrcryptoMath() {
                 // '(u,v) <- z_0 + m_0 * q'
                 uv = Math.floor((result[0] + (m0 * q)) / DIGIT_BASE);
 
-                // For j from 1 by 1 to s-1 
+                // For j from 1 by 1 to s-1
                 for (j = 1, k = 0; j < s; j += 1, k++) {
                     // '(u,v) <- m_j * q + z_j + u'
                     uv = ctx.m[j] * q + result[j] + uv;
@@ -2272,7 +2272,7 @@ function msrcryptoMath() {
         /// <remarks>This class represents the set of integers mod n. It is meant to be used in
         /// a variety of situations, for example to perform operations in the additive
         /// or multiplicative groups mod n. The modulus can be an arbitrary integer and
-        /// in the case that it is a prime p then the integer group is the field Fp. The 
+        /// in the case that it is a prime p then the integer group is the field Fp. The
         /// user should be aware of what type of object the given modulus produces, and
         /// thus which operations are valid.</remarks>
 
@@ -2297,7 +2297,7 @@ function msrcryptoMath() {
         function createElementFromBytes(bytes) {
             /// <summary>Create a new element object from a byte value.</summary>
             /// <param name="bytes" type="Array">Desired element in big-endian format in an array of bytes.</param>
-            /// <returns type="integerGroupElement">An element object representing the given element.</returns>            
+            /// <returns type="integerGroupElement">An element object representing the given element.</returns>
             var digits = bytesToDigits(bytes);
 
             // Check size of the new element
@@ -2437,12 +2437,12 @@ function msrcryptoMath() {
             /// The parent group to which this element belongs.
             /// </param>
 
-            // The value given in digits 
-            // must be &gt;= 0 and &;lt; modulus. Note that the constructor should not be 
-            // visible to the user, user should use group.createElementFromDigits(). This way we 
+            // The value given in digits
+            // must be &gt;= 0 and &;lt; modulus. Note that the constructor should not be
+            // visible to the user, user should use group.createElementFromDigits(). This way we
             // can use any digit size and endian-ness we wish internally, operating in
             // our chosen representation until such time as the user wishes to produce
-            // a byte array as output, which will be done by calling 
+            // a byte array as output, which will be done by calling
             // toByteArrayUnsigned(). Note that other properties and methods are meant
             // to be "public" of course and thus callable by the user.
 
@@ -2910,7 +2910,7 @@ function MsrcryptoECC() {
             // t2 = (x + z^2)(x - z^2)/2
             modDivByTwo(temp3, temp2);
 
-            // t1 = alpha = 3(x + z^2)(x - z^2)/2 
+            // t1 = alpha = 3(x + z^2)(x - z^2)/2
             modAdd(temp3, temp2, temp1);
 
             // t2 = y^2
@@ -3001,12 +3001,12 @@ function MsrcryptoECC() {
             outputPoint.isInMontgomeryForm = true;
         }
 
-        // Given a povar P on an elliptic curve, return a table of 
-        // size 2^(w-2) filled with pre-computed values for 
+        // Given a povar P on an elliptic curve, return a table of
+        // size 2^(w-2) filled with pre-computed values for
         // P, 3P, 5P, ... Etc.
         function generatePrecomputationTable(w, generatorPoint) {
-            /// <summary>Given a point P on an elliptic curve, return a table of 
-            /// size 2^(w-2) filled with pre-computed values for 
+            /// <summary>Given a point P on an elliptic curve, return a table of
+            /// size 2^(w-2) filled with pre-computed values for
             /// P, 3P, 5P, ... Etc.</summary>
             /// <param name="w" type="Array">Window size</param>
             /// <param name="generatorPoint" type="EllipticCurvePointFp"></param>
@@ -3101,7 +3101,7 @@ function MsrcryptoECC() {
 
             // Ok then we do the full double and add.
 
-            // Note: in pseudo-code the capital X,Y,Z is Jacobian point, lower 
+            // Note: in pseudo-code the capital X,Y,Z is Jacobian point, lower
             // case x, y, z is Affine point.
 
             // 't5:=Z1^ 2;'
@@ -3124,7 +3124,7 @@ function MsrcryptoECC() {
 
             //if t1 eq 0 then
             //    if t2 eq 0 then
-            //        X2,Y2,Z2 := DBL(X1,Y1,Z1,prime,rr,m,RR); 
+            //        X2,Y2,Z2 := DBL(X1,Y1,Z1,prime,rr,m,RR);
             //        return mADD(X2,Y2,Z2,x2,y2,prime,rr,m,RR);
             //    else
             //        return X1,Y1,Z1;
@@ -3288,14 +3288,14 @@ function MsrcryptoECC() {
 
             // Ok then we do the full double and add.
 
-            // Note: in pseudo-code the capital X1,Y1,Z1 is Jacobian point, 
+            // Note: in pseudo-code the capital X1,Y1,Z1 is Jacobian point,
             // lower case x2, y2, z2 is Affine point.
 
-            //if (X1 eq 0) and (Y1 eq 1) and (Z1 eq 0) then 
+            //if (X1 eq 0) and (Y1 eq 1) and (Z1 eq 0) then
             //    z2 := ToMontgomery(1,prime,rr,m,RR);
             //    return x2,y2;
             //end if;
-            //if (x2 eq 0) and (y2 eq 1) then 
+            //if (x2 eq 0) and (y2 eq 1) then
             //    return X1,Y1,Z1;
             //end if;
 
@@ -3377,7 +3377,7 @@ function MsrcryptoECC() {
                     return;
                 }
             }
-            // Else use DBL routine to return 2(x2, y2, 1) 
+            // Else use DBL routine to return 2(x2, y2, 1)
             affinePoint.copy(outputPoint);
             this.convertToJacobianForm(outputPoint);
             this.double(outputPoint, outputPoint);
@@ -3403,7 +3403,7 @@ function MsrcryptoECC() {
                 throw new Error("The scalar k must be in the range 1 <= k < order.");
             }
 
-            // copy k so we can modify it without modifying the passed in array. 
+            // copy k so we can modify it without modifying the passed in array.
             k = k.slice();
 
             if (point.curve.type === 1) {
@@ -3479,7 +3479,7 @@ function MsrcryptoECC() {
                 k[i] = ((odd - 1) & (k[i] ^ tempk[i])) ^ k[i];
             }
 
-            // Change w based on the size of the digits, 
+            // Change w based on the size of the digits,
             // 5 is good for 256 bits, use 6 for bigger sizes.
             var w = (fieldElementWidth <= 8) ? 5 : 6;
             var m = point.curve.p.length * cryptoMath.DIGIT_BITS;
@@ -3621,7 +3621,7 @@ function MsrcryptoECC() {
             montgomerySquare(conversionTemp2, conversionTemp0);
 
             // Compute point.x = x / z^2 mod p
-            // NOTE: We cannot output directly to the X digit array since it is 
+            // NOTE: We cannot output directly to the X digit array since it is
             // used for input to the multiplication routine, so we output to temp1
             // and copy.
             montgomeryMultiply(point.x, conversionTemp0, conversionTemp1);
@@ -3636,7 +3636,7 @@ function MsrcryptoECC() {
             montgomeryMultiply(conversionTemp1, conversionTemp2, point.y);
 
             // Finally, point.z = z / z mod p = 1
-            // We use z = NULL for this case to make detecting Jacobian form 
+            // We use z = NULL for this case to make detecting Jacobian form
             // faster (otherwise we would have to scan the entire Z digit array).
             point.z = null;
 
@@ -3679,11 +3679,11 @@ function MsrcryptoECC() {
                 return false;
             }
 
-            // Does P lie on the curve? 
+            // Does P lie on the curve?
             cryptoMath.modMul(point.y, point.y, point.curve.p, temp1)
 
-            cryptoMath.modMul(point.x, point.x, point.curve.p, temp2);  
-            cryptoMath.modMul(point.x, temp2, point.curve.p, temp3);    
+            cryptoMath.modMul(point.x, point.x, point.curve.p, temp2);
+            cryptoMath.modMul(point.x, temp2, point.curve.p, temp3);
             modAdd(temp3, point.curve.b, temp2);
             cryptoMath.modMul(point.x, point.curve.a, point.curve.p, temp3);
             modAdd(temp2, temp3, temp2);
@@ -3737,7 +3737,7 @@ function MsrcryptoECC() {
                 P2 = Q.clone(),
                 T = [];
 
-            // Generating P2 = 2(X1,Y1,Z1,T1a,T1b) -> (XP2,YP2,ZP2,d*TP2) and T[0] = P = (X1,Y1,Z1,T1a,T1b) 
+            // Generating P2 = 2(X1,Y1,Z1,T1a,T1b) -> (XP2,YP2,ZP2,d*TP2) and T[0] = P = (X1,Y1,Z1,T1a,T1b)
             T[0] = convert_R1_to_R2(point);
             doubleTed(Q, Q);
             P2 = convert_R1_to_R2(Q);
@@ -3772,7 +3772,7 @@ function MsrcryptoECC() {
             var t = Math.floor((rbits + (w - 2)) / (w - 1));
             var i, j;
 
-            // copy k so we can modify it without modifying the passed in array. 
+            // copy k so we can modify it without modifying the passed in array.
             k = k.slice();
 
             var T = point.clone();
@@ -3884,13 +3884,13 @@ function MsrcryptoECC() {
             // t1 = y1^2
             cryptoMath.modMul(point.y, point.y, point.curve.p, temp1);
 
-            // Ta = z1^2 
+            // Ta = z1^2
             cryptoMath.modMul(point.z, point.z, point.curve.p, point.ta);
 
             // (new) Tbfinal = Y1^2-X1^2
             modSub(temp1, temp0, outputPoint.tb);
 
-            //(new) t0 = X1^2+Y1^2 
+            //(new) t0 = X1^2+Y1^2
             modAdd(temp0, temp1, temp0);
 
             //(ok) Ta = 2z1^2
@@ -3905,13 +3905,13 @@ function MsrcryptoECC() {
             // Tafinal = 2x1y1
             cryptoMath.modMul(point.x, point.y, point.curve.p, outputPoint.ta);
 
-            // Yfinal = (x1^2+y1^2)(y1^2-x1^2)   
+            // Yfinal = (x1^2+y1^2)(y1^2-x1^2)
             cryptoMath.modMul(temp0, outputPoint.tb, point.curve.p, outputPoint.y);
 
             // Xfinal = 2x1y1[2z1^2-(y1^2-x1^2)]
             cryptoMath.modMul(temp1, outputPoint.ta, point.curve.p, outputPoint.x);
 
-            // Zfinal = (y1^2-x1^2)[2z1^2-(y1^2-x1^2)] 
+            // Zfinal = (y1^2-x1^2)[2z1^2-(y1^2-x1^2)]
             cryptoMath.modMul(temp0, temp1, point.curve.p, outputPoint.z);
 
             return;
@@ -3971,19 +3971,19 @@ function MsrcryptoECC() {
 
             temp1 = []; temp2 = []; temp3 = [];
 
-            //FP_MUL(P->Z, Q->Z, t3);             // t3 = Z1*Z2 
+            //FP_MUL(P->Z, Q->Z, t3);             // t3 = Z1*Z2
             cm.modMul(point2.z, qq.z, modulus, temp3);
 
-            //FP_MUL(P->Ta, P->Tb, t1);           // t1 = T1  
+            //FP_MUL(P->Ta, P->Tb, t1);           // t1 = T1
             cm.modMul(point2.ta, point2.tb, modulus, temp1);
 
-            //FP_ADD(P->X, P->Y, P->Ta);          // Ta = (X1+Y1)  
+            //FP_ADD(P->X, P->Y, P->Ta);          // Ta = (X1+Y1)
             modAdd(point2.x, point2.y, point2.ta);
 
-            //FP_MUL(t1, Q->Td, t2);              // t2 = dT1*T2   
+            //FP_MUL(t1, Q->Td, t2);              // t2 = dT1*T2
             cm.modMul(temp1, qq.td, modulus, temp2);
 
-            //FP_ADD(Q->X, Q->Y, P->Tb);          // Tb = (X2+Y2) 
+            //FP_ADD(Q->X, Q->Y, P->Tb);          // Tb = (X2+Y2)
             modAdd(qq.x, qq.y, point2.tb);
 
             //FP_SUB(t3, t2, t1);                 // t1 = theta
@@ -4001,10 +4001,10 @@ function MsrcryptoECC() {
             //FP_MUL(P->Y, Q->Y, P->X);           // X = Y1*Y2
             cm.modMul(point2.y, qq.y, modulus, point2.x);
 
-            //FP_SUB(t2, P->Z, t2);    
+            //FP_SUB(t2, P->Z, t2);
             modSub(temp2, point2.z, temp2);
 
-            //FP_SUB(P->X, P->Z, P->Ta);          // Tafinal = omega = Y1*Y2-X1*X2      
+            //FP_SUB(P->X, P->Z, P->Ta);          // Tafinal = omega = Y1*Y2-X1*X2
             modSub(point2.x, point2.z, outputPoint.ta);
 
             //FP_SUB(t2, P->X, P->Tb);            // Tbfinal = beta = (X1+Y1)(X2+Y2)-X1*X2-Y1*Y2
@@ -4147,24 +4147,24 @@ function MsrcryptoECC() {
 
             modAdd(a, a, temp3);
 
-            // t2 = 12xW + d - 2a 
+            // t2 = 12xW + d - 2a
             modSub(temp2, temp3, temp2);
 
-            // t2 = 12xW + d - 4a 
+            // t2 = 12xW + d - 4a
             modSub(temp2, temp3, temp2);
 
-            // t2 = 12xW + d - 5a  
+            // t2 = 12xW + d - 5a
             modSub(temp2, a, temp2);
 
             modAdd(d, d, temp3);
 
-            // t1 = 12xW + a - 2d  
+            // t1 = 12xW + a - 2d
             modSub(temp1, temp3, temp1);
 
-            // t1 = 12xW + a - 4d 
+            // t1 = 12xW + a - 4d
             modSub(temp1, temp3, temp1);
 
-            // t1 = 12xW + a - 5d  
+            // t1 = 12xW + a - 5d
             modSub(temp1, d, temp1);
 
             // t1 = 1/(12xW + a - 5d)
@@ -4379,9 +4379,9 @@ function MsrcryptoECC() {
                 }
             },
 
-            // Given an integer a, this routine returns the Jacobi symbol (a/p), 
-            // where p is the modulus given in the constructor, which for p an 
-            // odd prime is also the Legendre symbol. From "Prime Numbers, A 
+            // Given an integer a, this routine returns the Jacobi symbol (a/p),
+            // where p is the modulus given in the constructor, which for p an
+            // odd prime is also the Legendre symbol. From "Prime Numbers, A
             // Computational Perspective" by Crandall and Pomerance, alg. 2.3.5.
             // The Legendre symbol is defined as:
             //   0   if a === 0 mod p.
@@ -4640,16 +4640,16 @@ var curve_numsp384t1 = {
     // Parameter "a"
     a: [ 0x01 ],
     // Parameter "d"
-    d: [ 0x9F, 0xD1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
+    d: [ 0x9F, 0xD1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
           0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF ].reverse(),
     // Order of the subgroup
-    order: [ 0x7D, 0x89, 0xA3, 0xE6, 0xC4, 0xDC, 0xB9, 0x20, 0x79, 0xC8, 0x35, 0xAB, 0x5A, 0x55, 0xE4, 0x61, 0xCF, 0xE1, 0x6B, 0xB4, 0x1C, 0x1A, 0x47, 0xE2, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
+    order: [ 0x7D, 0x89, 0xA3, 0xE6, 0xC4, 0xDC, 0xB9, 0x20, 0x79, 0xC8, 0x35, 0xAB, 0x5A, 0x55, 0xE4, 0x61, 0xCF, 0xE1, 0x6B, 0xB4, 0x1C, 0x1A, 0x47, 0xE2, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x3F ].reverse(),
     // x(generator)
-    gx: [ 0xDE, 0x6B, 0x20, 0x6C, 0xE4, 0x40, 0xD5, 0x50, 0x13, 0x94, 0x45, 0x65, 0xB1, 0x92, 0xF2, 0x6F, 0x40, 0x63, 0x31, 0xF3, 0xA8, 0xFF, 0x63, 0x57, 0x00, 0x4C, 0xBE, 0xE5, 0x46, 0xF4, 0x0B, 0xB3, 
+    gx: [ 0xDE, 0x6B, 0x20, 0x6C, 0xE4, 0x40, 0xD5, 0x50, 0x13, 0x94, 0x45, 0x65, 0xB1, 0x92, 0xF2, 0x6F, 0x40, 0x63, 0x31, 0xF3, 0xA8, 0xFF, 0x63, 0x57, 0x00, 0x4C, 0xBE, 0xE5, 0x46, 0xF4, 0x0B, 0xB3,
           0xB5, 0x5D, 0xE5, 0x9A, 0x12, 0xA2, 0xB6, 0xC0, 0x6C, 0x26, 0xA9, 0x45, 0xFB, 0x11, 0xB1, 0x61 ].reverse(),
     // y(generator)
-    gy: [ 0x92, 0x93, 0x72, 0xF0, 0xE1, 0x03, 0x8D, 0x9D, 0xDC, 0x48, 0xEC, 0x46, 0xF9, 0xB0, 0x72, 0x00, 0x4B, 0x96, 0x45, 0xF6, 0xF7, 0x98, 0x0F, 0x83, 0x56, 0x5F, 0x42, 0xF1, 0x74, 0x82, 0xAD, 0x16, 
+    gy: [ 0x92, 0x93, 0x72, 0xF0, 0xE1, 0x03, 0x8D, 0x9D, 0xDC, 0x48, 0xEC, 0x46, 0xF9, 0xB0, 0x72, 0x00, 0x4B, 0x96, 0x45, 0xF6, 0xF7, 0x98, 0x0F, 0x83, 0x56, 0x5F, 0x42, 0xF1, 0x74, 0x82, 0xAD, 0x16,
         0xD7, 0x0D, 0xB1, 0x23, 0xA4, 0xB1, 0x38, 0x87, 0xB0, 0xEE, 0xA6, 0xB9, 0x67, 0x3E, 0x98, 0x82 ].reverse(),
     // co-factor
     cf: 4
@@ -4963,7 +4963,7 @@ var msrcryptoSha1 = (function () {
                 i >= 40 ? ((rb & rc) ^ (rb & rd) ^ (rc & rd)) :
                 i >= 20 ? (rb ^ rc ^ rd) :
                 /*i<=20*/ ((rb & rc) ^ ((~rb) & rd));
-           
+
             temp += (re + k[i] + w[i]);
 
             re = rd;
@@ -5444,7 +5444,7 @@ var msrcryptoHmac = (function () {
         }
         return paddedArray;
     }
-    
+
     function padKey() {
 
         if (keyBytes.length === blockSize) {
@@ -5994,7 +5994,7 @@ msrcryptoPadding.pkcsv7 = function (blockSize) {
         // Get value of the last element in the block
         // This will be the number of padding bytes on the end if the
         // message was decrypted correctly.
-        var padLen = lastBlock[lastBlock.length - 1];        
+        var padLen = lastBlock[lastBlock.length - 1];
 
         for (var i = 0; i < blockSize; i++) {
             var isPaddingElement = (blockSize - i <= padLen);
@@ -7274,7 +7274,7 @@ rsaMode.oaep = function (keyStruct, hashFunction) {
 
         db = db.slice(lHash.length);
 
-        // There will be a bunch of zeros followed by a 
+        // There will be a bunch of zeros followed by a
         var i = db.indexOf(1);
 
         return db.slice(i + 1);
@@ -7607,7 +7607,7 @@ if (typeof operations !== "undefined") {
     msrcryptoRsa.verify = function ( p) {
 
         var hashName = p.algorithm.hash.name,
-            hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],            
+            hashFunc = msrcryptoHashFunctions[hashName.toLowerCase()],
             rsaObj,
             saltLength = p.algorithm.saltLength;
 
@@ -8450,7 +8450,7 @@ if (!window.Promise) {
             return;
         };
 
-        // Call the executor function passing the resolve & reject functions of 
+        // Call the executor function passing the resolve & reject functions of
         // this instance.
 
         executor(resolve, reject);
@@ -8462,7 +8462,7 @@ if (!window.Promise) {
 
     window.Promise.all = function (promiseArray) {
         /// <summary>
-        /// Joins two or more promises and returns only when all the specified promises have completed or been rejected. 
+        /// Joins two or more promises and returns only when all the specified promises have completed or been rejected.
         /// </summary>
         /// <param name="promiseArray" type="Array">Array of promises.</param>
         /// <returns type="Promise">Returns a Promise.</returns>
@@ -8506,7 +8506,7 @@ if (!window.Promise) {
 
     window.Promise.race = function (promiseArray) {
         /// <summary>
-        /// Creates a new promise that will resolve or reject with the same result value as the first promise to resolve or reject among the passed in arguments. 
+        /// Creates a new promise that will resolve or reject with the same result value as the first promise to resolve or reject among the passed in arguments.
         /// </summary>
         /// <param name="promises" type="Array">Required. One or more promises.</param>
         /// <returns type="Promise">Result of first promise to resolve or fail.</returns>
@@ -8542,7 +8542,7 @@ if (!window.Promise) {
 
     window.Promise.reject = function (rejectReason) {
         /// <summary>
-        /// Creates a new rejected promise with a result equal to the passed in argument. 
+        /// Creates a new rejected promise with a result equal to the passed in argument.
         /// </summary>
         /// <param name="rejectReason" type="">Required. The reason why the promise was rejected.</param>
         /// <returns type=""></returns>
@@ -8582,7 +8582,7 @@ function syncWorker() {
     // that result. This will give the same behavior as a web-worker.
     function postMessage(data) {
 
-        // Web-workers will automatically return an error message when an 
+        // Web-workers will automatically return an error message when an
         // error is thrown within the web worker.
         // When using a sync worker, we'll have to catch thrown errors, so we
         // need a try/catch block here.
@@ -8647,9 +8647,9 @@ function baseOperation(processResults) {
         // Otherwise call the oncomplete callback
         this.result = processResults(e.data);
 
-        // Resolve the promise with the result 
+        // Resolve the promise with the result
         resolveFunc.apply(promise, [this.result]);
-        
+
         return;
     }
 
@@ -8780,7 +8780,7 @@ keys.lookup = function (keyHandle) {
 // Manages the pool of webworkers and job queue.
 // We first try to find an idle webworker and pass it a crypto job.
 // If there are no workers or they are all busy, we'll create a new one.
-// If we're at our (somewhat arbitrary) limit for workers we'll queue the 
+// If we're at our (somewhat arbitrary) limit for workers we'll queue the
 //   job until a worker is free.
 // When a worker finishes and the queue is empty it will kill itself to
 //   free resources.
@@ -8934,7 +8934,7 @@ var workerManager = (function () {
 
             // Send the results to the operation object and it will fire
             //   it's onCompleted event.
-            if (op && e.data.type !== "process") {
+            if (op && e.data && e.data.type !== "process") {
                 jobCompleted(worker);
                 op.dispatchEvent(e);
             }
@@ -9245,7 +9245,7 @@ var publicMethods = {
 
     decrypt: function (algorithm, keyHandle, buffer) {
         /// <signature>
-        ///     <summary>Decrypt a UInt8Array of data. 
+        ///     <summary>Decrypt a UInt8Array of data.
         ///     Decrypt will return an ArrayBuffer if supported, otherwise it will return an Array of byte values (numbers from 0-255)</summary>
         ///     <param name="algorithm" type="Algorithm"></param>
         ///     <param name="key" type="Key"></param>
@@ -9265,7 +9265,7 @@ var publicMethods = {
 
     sign: function (algorithm, keyHandle, buffer) {
         /// <signature>
-        ///     <summary>Sign a UInt8Array of data. 
+        ///     <summary>Sign a UInt8Array of data.
         ///     Sign will return a signature as an ArrayBuffer if supported, otherwise it will return an Array of byte values (numbers from 0-255)</summary>
         ///     <param name="algorithm" type="Algorithm"></param>
         ///     <param name="key" type="Key"></param>
@@ -9396,7 +9396,7 @@ var publicMethods = {
         ///     <returns type="KeyOperation" />
         /// </signature>
 
-        // Export is one of the few calls where the caller does not supply an algorithm 
+        // Export is one of the few calls where the caller does not supply an algorithm
         // since it's already a property of the key to be exported.
         // So, we're pulling it out of the key and adding it to the parameter set since
         // it is used as a switch to route the parameters to the right function.
@@ -9604,7 +9604,7 @@ var publicMethods = {
         ///     <summary>Add entropy to the PRNG.</summary>
         ///     <param name="entropyData" type="Array">Entropy input to seed or reseed the PRNG.</param>
         /// </signature>
-        
+
         var entropyDataType = Object.prototype.toString.call(entropyData);
 
         if (entropyDataType !== "[object Array]" && entropyDataType !== "[object Uint8Array]") {
@@ -9651,8 +9651,8 @@ var publicMethods = {
 };
 
 // Expose the math library if present
-if (typeof cryptoMath !== "undefined") { 
-    publicMethods.cryptoMath = cryptoMath; 
+if (typeof cryptoMath !== "undefined") {
+    publicMethods.cryptoMath = cryptoMath;
 }
 
 if (typeof testInterface !== "undefined") {
