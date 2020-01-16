@@ -8933,11 +8933,11 @@ var workerManager = (function () {
             }
 
             // Send the results to the operation object and it will fire
-            //   it's onCompleted event.
+            // it's onCompleted event.
             if (op) {
                 jobCompleted(worker);
                 if(e.data && e.data.type !== "process"){
-                  op.dispatchEvent(e);
+                    op.dispatchEvent(e);
                 }
             }
         };
